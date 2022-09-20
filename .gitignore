@@ -148,3 +148,8 @@ frontend/fiberdiameter/.env
 frontend/fiberdiameter/.DS_Store
 frontend/fiberdiameter/coverage/
 frontend/fiberdiameter/.vscode/
+
+# dataset artifacts
+src/dataset/artifacts/*
+wandb/
+.vscode/
