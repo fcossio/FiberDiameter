@@ -40,10 +40,10 @@ If you are proposing a feature:
 
 ## Get Started!
 
-
 ### Repo organization
 
 The repo consists of
+
 1. `dataset` Code to generate synthetic images.
 2. `segmentation` Code to create and train a segmentation model.
 3. `linefit` Code to fit lines on top of the segmentations.
@@ -64,12 +64,17 @@ Ready to contribute? Here's how to set up `fiberdiameter` for local development.
 3. Use `git` (or similar) to create a branch for local development and make your changes:
 
     ```console
-    $ git checkout -b name-of-your-bugfix-or-feature
+    git checkout -b name-of-your-bugfix-or-feature
     ```
 
 4. When you're done making changes, check that your changes conform to any code formatting requirements and pass any tests.
 
 5. Commit your changes and open a pull request.
+
+## Commit Guidelines
+
+This repository uses the [Angular Commiting Guidelines](https://gist.github.com/brianclements/841ea7bffdb01346392c) so that the
+Python Semantic Release can add appropriate information to each release.
 
 ## Pull Request Guidelines
 
