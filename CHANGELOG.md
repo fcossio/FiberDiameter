@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.1 (2022-09-21)
+### Documentation
+* Tidy README, update CONTRIBUTING ([`97c7682`](https://github.com/fcossio/FiberDiameter/commit/97c7682fbbbbfe5402c63ed98fb97c3f2d20c00f))
+
 ## v0.1.0 (2022-09-20)
 ### Feature
 * Download dataset notebook ([`8e61363`](https://github.com/fcossio/FiberDiameter/commit/8e6136304a7a17bf6a15baa92b2e4b2d41d38c5d))
