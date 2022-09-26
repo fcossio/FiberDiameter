@@ -1,0 +1,3 @@
+[submodule "src/unet_pytorch"]
+	path = src/unet_pytorch
+	url = git@github.com:jaxony/unet-pytorch.git
