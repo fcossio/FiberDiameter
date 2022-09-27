@@ -3,11 +3,9 @@ from argparse import ArgumentParser
 import inspect
 
 import torch
-import ignite
-import pytorch_lightning as pl
 import wandb
 
-from unet_pytorch.model import UNet as _UNet
+from dataset import FiberDataModule
 
 
 def parse_args(raw_args):
@@ -31,6 +29,7 @@ def parse_args(raw_args):
 
 
 def init_from_valid_args(cls, args):
+
     params = vars(args)
     valid_kwargs = inspect.signature(cls.__init__).parameters
     cls_kwargs = {name: params[name] for name in valid_kwargs if name in params}
@@ -38,39 +37,17 @@ def init_from_valid_args(cls, args):
     return cls(**cls_kwargs)
 
 
-class UNet(pl.LightningModule):
-    def __init__(
-        self,
-        num_classes,
-        in_channels,
-        depth,
-        start_filts,
-        up_mode,
-        merge_mode,
-        learning_rate,
-        loss,
-    ):
-        super().__init__()
-
-        self.model = _UNet(
-            num_classes, in_channels, depth, start_filts, up_mode, merge_mode
-        )
-
-        self.learning_rate = learning_rate
-        self.loss = getattr(torch.nn.functional, loss)
-
-        precision = ignite.metrics.precision.Precision()
-        recall = ignite.metrics.recall.Recall()
-        cm = ignite.metrics.confusion_matrix.ConfusionMatrix(num_classes=num_classes)
-        iou = ignite.metrics.IoU(cm, ignore_index=True)
-        self.metrics = [precision, recall, iou]
-
-
 if __name__ == "__main__":
 
     run = wandb.init(config=parse_args(sys.argv[1:]))
-    c = run.config
+    args = run.config
 
-    torch.manual_seed(c.seed)
+    torch.manual_seed(args.seed)
 
-    model = init_from_valid_args(UNet, c)
+    artifact = run.use_artifact(
+        "warm-kanelbullar/FiberDiameter/rendered-fibers-medium:v0"
+    )
+
+    args.dataset_path = artifact.download()
+
+    fibers = init_from_valid_args(FiberDataModule, args)
