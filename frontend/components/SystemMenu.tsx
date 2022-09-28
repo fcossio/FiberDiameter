@@ -4,7 +4,7 @@ const SystemMenu: FunctionComponent<
   React.ComponentPropsWithoutRef<"div">
 > = () => {
   return (
-    <div className='flex p-1 text-sm bg-purple-700'>
+    <div className='flex p-1 text-sm group bg-slate-700'>
       <Tab title='File'>
         <Item>New</Item>
         <Item>Open</Item>
@@ -27,11 +27,11 @@ const Tab: FunctionComponent<React.ComponentPropsWithoutRef<"div">> = (
   props
 ) => {
   return (
-    <div className='bg-inherit'>
-      <button className='px-2 py-1 rounded-md peer hover:bg-slate-600 focus:bg-slate-600'>
+    <div className='bg-inherit group'>
+      <button className='px-2 py-1 rounded-md peer hover:bg-slate-600'>
         {props.title}
       </button>
-      <div className='absolute hidden w-32 bg-inherit peer-focus:block'>
+      <div className='absolute hidden w-32 cursor-pointer bg-inherit group-focus-within:peer-hover:block hover:block'>
         {props.children}
       </div>
     </div>
