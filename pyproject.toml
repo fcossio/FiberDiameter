@@ -2,7 +2,12 @@
 name = "fiberdiameter"
 version = "0.1.1"
 description = "Measure the diameter of fibers 10x faster!"
-authors = ["Fernando Cossio", "Yael Suarez", "Subhadeep Chowdhury", "Luis Cossio", "Ale de Luna"]
+authors = [
+            "Fernando Cossio", 
+            "Yael Suarez", 
+            "Subhadeep Chowdhury", 
+            "Luis Cossio", 
+            "Alejandra De Luna"]
 license = "Apache License 2.0"
 readme = "README.md"
 
