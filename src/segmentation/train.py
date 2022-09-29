@@ -7,7 +7,7 @@ import torch
 import wandb
 from pytorch_lightning import Trainer, seed_everything
 
-from model import UNet
+from UNet import UNet
 from dataset import FiberDataModule
 
 import multiprocessing
