@@ -6,7 +6,6 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
-from torchvision import transforms
 
 from PIL import Image, ImageOps
 
@@ -19,7 +18,8 @@ def load_task(data_dir: str, task_id: str):
     # Load segmentation
     seg: np.ndarray = (
         np.load(os.path.join(data_dir, task_id + "_seg.npz"))["y"]
-    ).squeeze()
+    )
+    seg = np.moveaxis(seg, -1, 0)
     return im, seg
 
 
@@ -30,11 +30,11 @@ def select_point_and_fiber(seg: np.ndarray):
     possible_points = np.argwhere(mask_all)
     point_index = np.random.randint(0, possible_points.shape[0] - 1)
     point = possible_points[point_index]
-    fiber_id = seg[point[0], point[1]]
+    fiber_id = seg[point[0], point[1], point[2]]
     mask = seg == fiber_id
     selected_seg = np.zeros_like(seg, dtype=np.float32)
     selected_seg[mask] = 1.0
-    return point[0:2], selected_seg
+    return point, selected_seg
 
 
 def get_example(data_dir: str, task_id: str) -> tuple:
@@ -42,7 +42,7 @@ def get_example(data_dir: str, task_id: str) -> tuple:
     im, seg = load_task(data_dir, task_id)
     point, selected_seg = select_point_and_fiber(seg)
     point_channel = np.zeros_like(im, dtype=np.float32)
-    point_channel[0, point[0], point[1]] = 1.0
+    point_channel[point[0], point[1], point[2]] = 1.0
     x = np.concatenate([im, point_channel])
     y = selected_seg
     return x, y
@@ -71,7 +71,7 @@ class FiberDataset(torch.utils.data.Dataset):
         x, y = get_example(self.data_dir, task_id)
 
         x = torch.tensor(x)
-        y = torch.tensor(y)[None]
+        y = torch.tensor(y)
 
         return x, y
 
