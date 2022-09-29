@@ -11,19 +11,6 @@ from torchvision import transforms
 from PIL import Image, ImageOps
 
 
-def get_fibers_dictionary(data_dir: str, stage: str):
-
-    fibers_dict = {}
-    idx = 0
-
-    for file in os.listdir(data_dir):
-        if file[: len(stage)] == stage and file[-6:] == "params":
-            fibers_dict[idx] = file[:-7]
-            idx += 1
-
-    return fibers_dict
-
-
 def load_task(data_dir: str, task_id: str):
     # Load an image
     im = Image.open(os.path.join(data_dir, task_id + ".png"))
@@ -62,23 +49,26 @@ def get_example(data_dir: str, task_id: str) -> tuple:
 
 
 class FiberDataset(torch.utils.data.Dataset):
-    def __init__(self, stage: str, fiber_dic: dict, data_dir: str):
+    def __init__(
+        self,
+        stage: str,
+        data_dir: str,
+        num_images: int,
+    ):
         super().__init__()
 
         self.stage = stage
-        self.fiber_dic = fiber_dic
         self.data_dir = data_dir
+        self.num_images = num_images
 
     def __len__(self):
-        return len(self.fiber_dic)
+        return self.num_images
 
     def __getitem__(self, idx):
-        if torch.is_tensor(idx):
-            idx = idx.tolist()
 
-        fiber_file = self.fiber_dic[idx]
+        task_id = self.stage + str(idx).zfill(4)
 
-        x, y = get_example(self.data_dir, fiber_file)
+        x, y = get_example(self.data_dir, task_id)
 
         x = torch.tensor(x)
         y = torch.tensor(y)[None]
@@ -87,35 +77,42 @@ class FiberDataset(torch.utils.data.Dataset):
 
 
 class FiberDataModule(pl.LightningDataModule):
-    def __init__(self, data_dir: str, batch_size: int = 32, num_workers: int = 12):
+    def __init__(
+        self,
+        data_dir: str,
+        train_images: int,
+        val_images: int,
+        test_images: int = None,
+        batch_size: int = 32,
+        num_workers: int = 2,
+    ):
         super().__init__()
         self.data_dir = data_dir
         self.batch_size = batch_size
         self.num_workers = num_workers
+        self.train_images = train_images
+        self.val_images = val_images
+        self.test_images = test_images
 
     def setup(self, stage: str):
 
         if stage == "fit" or stage is None:
-            train_dict = get_fibers_dictionary(self.data_dir, "train")
-            val_dict = get_fibers_dictionary(self.data_dir, "val")
             self.fiber_train = FiberDataset(
                 "train",
-                train_dict,
                 self.data_dir,
+                self.train_images,
             )
             self.fiber_val = FiberDataset(
                 "val",
-                val_dict,
                 self.data_dir,
+                self.val_images,
             )
 
         else:
-            test_dict = get_fibers_dictionary(self.data_dir, "test")
-
             self.fiber_test = FiberDataset(
                 "test",
-                test_dict,
                 self.data_dir,
+                self.test_images,
             )
 
     def train_dataloader(self: pl.LightningDataModule):
