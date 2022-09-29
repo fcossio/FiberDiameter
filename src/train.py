@@ -1,4 +1,5 @@
 import sys
+
 from argparse import ArgumentParser
 import inspect
 
@@ -8,6 +9,8 @@ from pytorch_lightning import Trainer, seed_everything
 
 from model import UNet
 from dataset import FiberDataModule
+
+import multiprocessing
 
 
 def parse_args(raw_args):
@@ -29,9 +32,12 @@ def parse_args(raw_args):
     parser.add_argument(
         "--data_dir", type=str, default="artifacts/rendered-fibers-medium:v0"
     )
-    parser.add_argument("--num_workers", type=int, default=12)
+    parser.add_argument("--num_workers", type=int, default=multiprocessing.cpu_count())
     parser.add_argument("--limit_train_batches", type=float, default=0.1)
     parser.add_argument("--shuffle", type=bool, default=True)
+    parser.add_argument("--train_images", type=int, default=2047)
+    parser.add_argument("--val_images", type=int, default=255)
+    parser.add_argument("--test_images", type=int, default=255)
     args = parser.parse_args(raw_args)
     return args
 
@@ -48,6 +54,7 @@ if __name__ == "__main__":
 
     run = wandb.init(
         project="FiberDiameter",
+        job_type="train",
         config=parse_args(sys.argv[1:]),
     )
     cfg = run.config
