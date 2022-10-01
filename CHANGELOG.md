@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.2 (2022-10-01)
+### Documentation
+* Author name correction ([`a46eb8f`](https://github.com/fcossio/FiberDiameter/commit/a46eb8fb8a085e0de81db7aa7bc55102ea2523e3))
+
 ## v0.1.1 (2022-09-21)
 ### Documentation
 * Tidy README, update CONTRIBUTING ([`97c7682`](https://github.com/fcossio/FiberDiameter/commit/97c7682fbbbbfe5402c63ed98fb97c3f2d20c00f))

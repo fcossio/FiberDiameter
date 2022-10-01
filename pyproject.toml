@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fiberdiameter"
-version = "0.1.1"
+version = "0.1.2"
 description = "Measure the diameter of fibers 10x faster!"
 authors = [
             "Fernando Cossio", 
