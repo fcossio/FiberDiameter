@@ -1,0 +1,3 @@
+[submodule "src/segmentation/unet_pytorch"]
+	path = src/segmentation/unet_pytorch
+	url = git@github.com:jaxony/unet-pytorch.git
