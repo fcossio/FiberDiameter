@@ -9,10 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "draft-js": "^0.11.7",
     "next": "12.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-measurements": "^0.6.8"
+    "@coszio/react-measurements": "^0.6.10"
   },
   "devDependencies": {
     "@types/node": "18.7.18",

@@ -1,6 +1,7 @@
 import SystemMenu from "./SystemMenu";
 import FiberItem, { Props as FiberItemProps } from "./FiberItem";
 import Section from "./Section";
+import Editor from "./Editor";
 
 const App = () => {
   let fibers: FiberItemProps[] = [
@@ -19,7 +20,7 @@ const App = () => {
   return (
     <div className='container'>
       <SystemMenu className="w-full"/>
-      <div className="flex h-screen">
+      <div className="flex h-[90vh]">
         
       <div id='side-panel' className='w-1/4 bg-slate-400'>
         <Section id='fibers' title='Fibers'>
@@ -29,7 +30,9 @@ const App = () => {
         </Section>
         <Section id='globals' title='Globals'></Section>
       </div>
-      <div id='editor' className='w-full bg-green-700'></div>
+        <div id='editor' className='w-full bg-green-700'>
+          <Editor/>
+      </div>
             </div>
     </div>
   );
