@@ -34,7 +34,7 @@ def parse_args(raw_args):
         "--data_dir", type=str, default="artifacts/rendered-fibers-medium:v0"
     )
     parser.add_argument("--num_workers", type=int, default=multiprocessing.cpu_count())
-    parser.add_argument("--limit_train_batches", type=float, default=0.1)
+    parser.add_argument("--limit_train_batches", type=float, default=0.25)
     parser.add_argument("--shuffle", type=bool, default=True)
     parser.add_argument("--train_images", type=int, default=2047)
     parser.add_argument("--val_images", type=int, default=255)
