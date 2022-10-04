@@ -6,6 +6,7 @@ import inspect
 import torch
 import wandb
 from pytorch_lightning import Trainer, seed_everything
+import onnx
 
 from UNet import UNet
 from dataset import FiberDataModule
@@ -14,7 +15,7 @@ import multiprocessing
 
 
 def parse_args(raw_args):
-    parser = ArgumentParser(description="train a LWBAM-Unet from scratch")
+    parser = ArgumentParser(description="Train a Unet from scratch.")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--max_epochs", type=int, default=20)
     parser.add_argument("--num_classes", type=int, default=1)
@@ -38,6 +39,7 @@ def parse_args(raw_args):
     parser.add_argument("--train_images", type=int, default=2047)
     parser.add_argument("--val_images", type=int, default=255)
     parser.add_argument("--test_images", type=int, default=255)
+    parser.add_argument("--model_path", type=str, default="model.onnx")
     args = parser.parse_args(raw_args)
     return args
 
@@ -48,6 +50,12 @@ def init_from_valid_args(cls, args):
     cls_kwargs = {name: args[name] for name in valid_kwargs if name in args}
 
     return cls(**cls_kwargs)
+
+
+def to_numpy(tensor):
+    return (
+        tensor.detach().cpu().numpy() if tensor.requires_grad else tensor.cpu().numpy()
+    )
 
 
 if __name__ == "__main__":
@@ -75,9 +83,17 @@ if __name__ == "__main__":
 
     trainer.fit(model, datamodule=fibers)
 
-    torch.save(model.state_dict(), "trained_model.pth")
+    torch.onnx.export(
+        model=model,
+        args=torch.randn(1, 2, 256, 256),
+        f=cfg.model_path,
+        export_params=True,
+        verbose=True,
+        input_names=["input"],
+        output_names=["segmentation"],
+    )
 
     trained_model_artifact = wandb.Artifact("model", type="model", metadata=cfg)
-    trained_model_artifact.add_file("trained_model.pth")
+    trained_model_artifact.add_file(cfg.model_path)
     run.log_artifact(trained_model_artifact)
     run.finish()
