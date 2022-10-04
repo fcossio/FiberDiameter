@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 
 const MeasuredImage = dynamic(() => import('./MeasuredImage'), { ssr: false });
 
-
 interface Props {
 
 }
