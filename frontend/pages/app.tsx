@@ -3,11 +3,8 @@ import App from '../components/App';
 
 const AppPage = () => {
   return (
-    <div className="container w-4/5 mx-auto">
-      <p className="text-3xl">
-      Fiber Diameter UI
-      </p>
-      <App/>
+    <div className='container w-4/5 p-4 mx-auto'>
+      <App />
     </div>
   );
 };

@@ -8,7 +8,7 @@ export interface Props {
 
 const FiberItem: FunctionComponent<Props> = (props) => {
   return (
-    <div className='flex justify-start pl-2 space-x-2 overflow-hidden bg-transparent cursor-pointer place-items-center hover:bg-slate-500'>
+    <div className='flex justify-start pl-2 space-x-2 overflow-hidden bg-transparent cursor-pointer place-items-center hover:bg-slate-400'>
       <p id='id' className=''>
         {props.id}
       </p>

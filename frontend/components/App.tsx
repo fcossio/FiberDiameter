@@ -22,7 +22,7 @@ const App = () => {
       <SystemMenu className="w-full"/>
       <div className="flex h-[90vh]">
         
-      <div id='side-panel' className='w-1/4 bg-slate-400'>
+      <div id='side-panel' className='w-1/4 bg-slate-300'>
         <Section id='fibers' title='Fibers'>
           {fibers.map((fiber) => (
             <FiberItem key={fiber.id} {...fiber} />

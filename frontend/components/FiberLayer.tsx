@@ -21,7 +21,7 @@ const FiberLayer: FunctionComponent<Props> = (props) => {
   return (
     <div
       id={`layer${props.fiberId}`}
-      className='absolute'
+      className='absolute pointer-events-none'
       style={{
         width: `${props.imageDims.width}px`,
         height: `${props.imageDims.height}px`,
@@ -35,11 +35,14 @@ const FiberLayer: FunctionComponent<Props> = (props) => {
         heightInPx={props.imageDims.height}
         onChange={props.onChange}
         measureLine={props.measureLine}
+        measureCircle={props.measureCircle}
       />
 
       {/* --------  Customize react-measurements style  --------*/}
       <style jsx>
         {`
+          /* ---- Lines, circles, annotations ---- */
+
           :global(#layer${props.fiberId}
               .line-measurement
               .line, .circle-measurement .circle, .text-annotation
@@ -51,10 +54,9 @@ const FiberLayer: FunctionComponent<Props> = (props) => {
             fill: ${props.color};
           }
 
-          .measurement-text,
-          .text-annotation .text {
-            color: green;
-            background-color: rgba(0, 0, 0, 0.7);
+          /* ---- disable button bar ---- */
+          :global(.measurement-layer:hover .button-bar) {
+            opacity: 0;
           }
         `}
       </style>

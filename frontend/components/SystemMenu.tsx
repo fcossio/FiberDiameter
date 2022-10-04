@@ -41,7 +41,7 @@ const Tab: FunctionComponent<React.ComponentPropsWithoutRef<"div">> = (
 const Item: FunctionComponent<React.ComponentPropsWithoutRef<"div">> = (
   props
 ) => {
-  return <div className='m-1 hover:bg-slate-600'>{props.children}</div>;
+  return <div className='z-auto m-1 hover:bg-slate-600'>{props.children}</div>;
 };
 
 export default SystemMenu;
