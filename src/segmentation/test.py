@@ -40,7 +40,9 @@ if __name__ == "__main__":
 
     dataset_path = artifact.download()
 
-    model_artifact = run.use_artifact(f"warm-kanelbullar/FiberDiameter/model.onnx:{cfg.model_version}")
+    model_artifact = run.use_artifact(
+        f"warm-kanelbullar/FiberDiameter/seg_model.onnx:{cfg.model_version}"
+    )
 
     model_path = model_artifact.download()
 
@@ -63,4 +65,4 @@ if __name__ == "__main__":
         inference = onnx_session.run([output_name], {input_name: to_numpy(x[None])})
         loss.append(abs(torch.nn.functional.mse_loss(torch.tensor(inference[0][0]), y)))
 
-    run.log({"loss": sum(loss) * 100 / len(loss)})
+    run.log({"loss": sum(loss) / len(loss)})
