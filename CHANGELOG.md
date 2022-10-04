@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.0 (2022-10-04)
+### Feature
+* **UI:** Add multiple measurement layers ([`892a84c`](https://github.com/fcossio/FiberDiameter/commit/892a84c637ca6293273fbb78c721c24ae9795c4b))
+* **UI:** Add editor section ([`8742bff`](https://github.com/fcossio/FiberDiameter/commit/8742bffc6331525be1023f8f6b45c717d407fb9f))
+* **UI:** Add sidebar and system menu ([`4b4c93d`](https://github.com/fcossio/FiberDiameter/commit/4b4c93d7e284ac48f9d72b0857157a00ac808e7a))
+* **UI:** Yarn create next-app ([`a668e1d`](https://github.com/fcossio/FiberDiameter/commit/a668e1d572ccd2faf3c6726f13bafb4e896c0640))
+
+### Fix
+* **UI:** Enable click-through selection of all layers ([`8914a65`](https://github.com/fcossio/FiberDiameter/commit/8914a65893c91c1c766e5efcb900e38bad07c75c))
+
 ## v0.1.2 (2022-10-01)
 ### Documentation
 * Author name correction ([`a46eb8f`](https://github.com/fcossio/FiberDiameter/commit/a46eb8fb8a085e0de81db7aa7bc55102ea2523e3))
