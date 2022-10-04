@@ -39,7 +39,7 @@ def parse_args(raw_args):
     parser.add_argument("--train_images", type=int, default=2047)
     parser.add_argument("--val_images", type=int, default=255)
     parser.add_argument("--test_images", type=int, default=255)
-    parser.add_argument("--model_path", type=str, default="model.onnx")
+    parser.add_argument("--model_path", type=str, default="seg_model.onnx")
     args = parser.parse_args(raw_args)
     return args
 
@@ -93,7 +93,7 @@ if __name__ == "__main__":
         output_names=["segmentation"],
     )
 
-    trained_model_artifact = wandb.Artifact("model", type="model", metadata=cfg)
+    trained_model_artifact = wandb.Artifact("seg_model", type="model", metadata=cfg)
     trained_model_artifact.add_file(cfg.model_path)
     run.log_artifact(trained_model_artifact)
     run.finish()
