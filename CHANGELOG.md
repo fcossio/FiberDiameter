@@ -2,6 +2,9 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.1 (2022-10-05)
+
+
 ## v0.2.0 (2022-10-04)
 ### Feature
 * **UI:** Add multiple measurement layers ([`892a84c`](https://github.com/fcossio/FiberDiameter/commit/892a84c637ca6293273fbb78c721c24ae9795c4b))
