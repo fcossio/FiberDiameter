@@ -103,7 +103,7 @@ const MeasuredImage = (props: Props) => {
     
     window.addEventListener("resize", onImageBoundsChanged);
     onImageBoundsChanged();
-  }, [image]);
+  }, [image, state.loaded]);
 
   // update real scale of the image
   useEffect(() => {
