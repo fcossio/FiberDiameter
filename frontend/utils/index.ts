@@ -24,3 +24,25 @@ export function getObjectFitSize(
     y: (image.height - targetHeight) / 2,
   };
 }
+
+/**
+ * Calculates the real size of the image from a measurement and its length
+ */ 
+export const calculateRealImageSize = (
+  measurement: any,
+  length: number,
+  imageDims: { width: number; height: number }
+) => {
+  let percentage_dx = Math.abs(measurement.startX - measurement.endX);
+  let percentage_dy = Math.abs(measurement.startY - measurement.endY);
+
+  let pixel_dx = percentage_dx * imageDims.width;
+  let pixel_dy = percentage_dy * imageDims.height;
+
+  let pixel_length = Math.sqrt(pixel_dx ** 2 + pixel_dy ** 2);
+
+  return {
+    width: (imageDims.width * length) / pixel_length,
+    height: (imageDims.height * length) / pixel_length,
+  };
+};
