@@ -1,11 +1,9 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 
-const Section: FunctionComponent<
-  React.ComponentPropsWithoutRef<"div">
-> = (props) => {
+const Section = (props: React.ComponentPropsWithoutRef<"div">) => {
   return (
-    <div className=' text-slate-500'>
-          <p className='bg-slate-100 text-slate-700'>{props.title}</p>
+    <div className={`text-slate-500 ${props.className}`}>
+      <p className='pl-2 bg-slate-100 text-slate-700'>{props.title}</p>
       {props.children}
     </div>
   );

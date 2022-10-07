@@ -1,10 +1,17 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 
 import { MeasurementLayer } from "@coszio/react-measurements";
 
 interface Props {
   fiberId: number;
-  measurements: any;
+  measurements: {
+        id: number,
+        type: string,
+        startX: number,
+        startY: number,
+        endX: number,
+        endY: number,
+  }[];
   color: string;
   imageDims: {
     width: number;
@@ -17,7 +24,7 @@ interface Props {
   measureCircle: (circle: any) => string;
 }
 
-const FiberLayer: FunctionComponent<Props> = (props) => {
+const FiberLayer = (props: Props) => {
   return (
     <div
       id={`layer${props.fiberId}`}
