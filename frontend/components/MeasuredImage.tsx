@@ -4,54 +4,54 @@ import { calculateDistance, calculateArea } from "@coszio/react-measurements";
 import FiberLayer from "./FiberLayer";
 import { calculateRealImageSize, getObjectFitSize } from "../utils";
 import ScaleLayer from "./ScaleLayer";
-import { ScaleContext } from "./App";
+import { ImageContext } from "./App";
 
-const createInitialMeasurements = () => [
-  {
-    id: 0,
-    color: "#FA04FF",
-    measurements: [
-      {
-        id: 0,
-        type: "line",
-        startX: 0.183,
-        startY: 0.33,
-        endX: 0.316,
-        endY: 0.224,
-      },
-      {
-        id: 1,
-        type: "line",
-        startX: 0.183,
-        startY: 0.43,
-        endX: 0.416,
-        endY: 0.424,
-      },
-    ],
-  },
-  {
-    id: 1,
-    color: "#4A04FF",
-    measurements: [
-      {
-        id: 0,
-        type: "line",
-        startX: 0.63,
-        startY: 0.44,
-        endX: 0.216,
-        endY: 0.324,
-      },
-      {
-        id: 1,
-        type: "line",
-        startX: 0.183,
-        startY: 0.43,
-        endX: 0.416,
-        endY: 0.424,
-      },
-    ],
-  },
-];
+// const createInitialMeasurements = () => [
+//   {
+//     id: 0,
+//     color: "#FA04FF",
+//     measurements: [
+//       {
+//         id: 0,
+//         type: "line",
+//         startX: 0.183,
+//         startY: 0.33,
+//         endX: 0.316,
+//         endY: 0.224,
+//       },
+//       {
+//         id: 1,
+//         type: "line",
+//         startX: 0.183,
+//         startY: 0.43,
+//         endX: 0.416,
+//         endY: 0.424,
+//       },
+//     ],
+//   },
+//   {
+//     id: 1,
+//     color: "#4A04FF",
+//     measurements: [
+//       {
+//         id: 0,
+//         type: "line",
+//         startX: 0.63,
+//         startY: 0.44,
+//         endX: 0.216,
+//         endY: 0.324,
+//       },
+//       {
+//         id: 1,
+//         type: "line",
+//         startX: 0.183,
+//         startY: 0.43,
+//         endX: 0.416,
+//         endY: 0.424,
+//       },
+//     ],
+//   },
+// ];
 
 const initialScale = () => {
   return {
@@ -68,9 +68,7 @@ interface Props {
 }
 
 const MeasuredImage = (props: Props) => {
-  const scaleLength = useContext(ScaleContext);
-
-  const [fibers, setFibers] = useState(createInitialMeasurements());
+  const { scaleLength, fibers, setFibers, magnitude } = useContext(ImageContext)!;
 
   const [state, setState] = useState({
     loaded: false,
@@ -81,18 +79,18 @@ const MeasuredImage = (props: Props) => {
   const [image, setImage] = useState(new Image());
   const [imageDims, setImageDims] = useState(getObjectFitSize(true, image));
 
-  const onChange = (fiberId: number, measurements: any) => {
+  const onChange = (fiberKey: number, measurements: any) => {
     let newFibers = [...fibers];
-    newFibers[fiberId].measurements = measurements;
+    newFibers[fiberKey].measurements = measurements;
     setFibers(newFibers);
   };
 
   const measureLine = (line: any) =>
-    Math.round(calculateDistance(line, scale.width, scale.height)) + " nm";
+    Math.round(calculateDistance(line, scale.width, scale.height)) + ` ${magnitude}`;
 
   const measureCircle = (circle: any) =>
     Math.round(calculateArea(circle, scale.width, scale.height) / 10) * 10 +
-    " nm²";
+    ` ${magnitude}²`;
 
   const onImageLoaded = () => setState({ ...state, loaded: true });
   
@@ -133,7 +131,7 @@ const MeasuredImage = (props: Props) => {
               measurements={fiber.measurements}
               color={fiber.color}
               imageDims={imageDims}
-              onChange={(measurements) => onChange(fiber.id, measurements)}
+              onChange={(measurements) => onChange(key, measurements)}
               measureLine={measureLine}
               measureCircle={measureCircle}
             />

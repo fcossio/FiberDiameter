@@ -1,4 +1,10 @@
 // adapted from: https://www.npmjs.com/package/intrinsic-scale
+/**
+ * 
+ * @param contains Type of fitting: object-contain = `true`, object-cover = `false`
+ * @param image HTML image reference
+ * @returns The real fitted dimensions of the image, along with its offset
+ */
 export function getObjectFitSize(
   contains: boolean /* true = contain, false = cover */,
   image: HTMLImageElement
