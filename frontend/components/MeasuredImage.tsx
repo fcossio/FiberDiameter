@@ -4,54 +4,7 @@ import { calculateDistance, calculateArea } from "@coszio/react-measurements";
 import FiberLayer from "./FiberLayer";
 import { calculateRealImageSize, getObjectFitSize } from "../utils";
 import ScaleLayer from "./ScaleLayer";
-import { ScaleContext } from "./App";
-
-const createInitialMeasurements = () => [
-  {
-    id: 0,
-    color: "#FA04FF",
-    measurements: [
-      {
-        id: 0,
-        type: "line",
-        startX: 0.183,
-        startY: 0.33,
-        endX: 0.316,
-        endY: 0.224,
-      },
-      {
-        id: 1,
-        type: "line",
-        startX: 0.183,
-        startY: 0.43,
-        endX: 0.416,
-        endY: 0.424,
-      },
-    ],
-  },
-  {
-    id: 1,
-    color: "#4A04FF",
-    measurements: [
-      {
-        id: 0,
-        type: "line",
-        startX: 0.63,
-        startY: 0.44,
-        endX: 0.216,
-        endY: 0.324,
-      },
-      {
-        id: 1,
-        type: "line",
-        startX: 0.183,
-        startY: 0.43,
-        endX: 0.416,
-        endY: 0.424,
-      },
-    ],
-  },
-];
+import { ImageContext } from "./App";
 
 const initialScale = () => {
   return {
@@ -64,53 +17,56 @@ const initialScale = () => {
   };
 };
 
-interface Props {
-}
+interface Props {}
 
 const MeasuredImage = (props: Props) => {
-  const scaleLength = useContext(ScaleContext);
-
-  const [fibers, setFibers] = useState(createInitialMeasurements());
+  const { scaleLength, fibers, setFibers, magnitude, realDims, setRealDims } =
+    useContext(ImageContext)!;
 
   const [state, setState] = useState({
     loaded: false,
   });
   const [scaleMeasurement, setScaleMeasurement] = useState(initialScale());
-  const [scale, setScale] = useState({ width: 0, height: 0 });
 
   const [image, setImage] = useState(new Image());
+
+  // image dimensions in pixels
   const [imageDims, setImageDims] = useState(getObjectFitSize(true, image));
 
-  const onChange = (fiberId: number, measurements: any) => {
-    let newFibers = [...fibers];
-    newFibers[fiberId].measurements = measurements;
-    setFibers(newFibers);
+  const onLayerChange = (fiberKey: number, measurements: any) => {
+    setFibers((prevFibers) => {
+      prevFibers[fiberKey].measurements = measurements;
+      return [...fibers];
+    });
   };
 
   const measureLine = (line: any) =>
-    Math.round(calculateDistance(line, scale.width, scale.height)) + " nm";
+    Math.round(calculateDistance(line, realDims.width, realDims.height) * 1) /
+      1 +
+    ` ${magnitude}`;
 
   const measureCircle = (circle: any) =>
-    Math.round(calculateArea(circle, scale.width, scale.height) / 10) * 10 +
-    " nm²";
+    Math.round(calculateArea(circle, realDims.width, realDims.height) * 10) /
+      10 +
+    ` ${magnitude}²`;
 
   const onImageLoaded = () => setState({ ...state, loaded: true });
-  
+
   // update size of measurement layers
   useEffect(() => {
     const onImageBoundsChanged = () =>
       setImageDims(getObjectFitSize(true, image));
-    
+
     window.addEventListener("resize", onImageBoundsChanged);
     onImageBoundsChanged();
   }, [image, state.loaded]);
 
   // update real scale of the image
   useEffect(() => {
-    setScale(
+    setRealDims(
       calculateRealImageSize(scaleMeasurement, scaleLength, imageDims)
     );
-  }, [scaleMeasurement, imageDims, scaleLength]);
+  }, [scaleMeasurement, imageDims, scaleLength, setRealDims]);
 
   return (
     <div className='relative'>
@@ -121,10 +77,10 @@ const MeasuredImage = (props: Props) => {
           alt='fibers image'
           ref={(e) => setImage(e!)}
           onLoad={onImageLoaded}
-          className='object-contain w-full h-[90vh]'
+          className='object-contain w-full h-[90vh] pointer-events-none'
         />
       </picture>
-      {state.loaded &&
+      {state.loaded && (
         <>
           {fibers.map((fiber, key) => (
             <FiberLayer
@@ -133,7 +89,7 @@ const MeasuredImage = (props: Props) => {
               measurements={fiber.measurements}
               color={fiber.color}
               imageDims={imageDims}
-              onChange={(measurements) => onChange(fiber.id, measurements)}
+              onChange={(measurements) => onLayerChange(key, measurements)}
               measureLine={measureLine}
               measureCircle={measureCircle}
             />
@@ -147,7 +103,7 @@ const MeasuredImage = (props: Props) => {
             measureCircle={measureCircle}
           />
         </>
-      }
+      )}
     </div>
   );
 };

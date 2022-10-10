@@ -22,6 +22,7 @@ interface Props {
   onChange: (measurements: any) => void;
   measureLine: (line: any) => string;
   measureCircle: (circle: any) => string;
+  disableRemoveButton?: boolean;
 }
 
 const FiberLayer = (props: Props) => {
@@ -62,8 +63,14 @@ const FiberLayer = (props: Props) => {
           }
 
           /* ---- disable button bar ---- */
-          :global(.measurement-layer:hover .button-bar) {
+          :global(#layer${props.fiberId} .measurement-layer:hover .button-bar) {
             opacity: 0;
+          }
+
+          /* ---- disable remove button ---- */
+          :global(
+              #layer${props.fiberId} .delete-button ) {
+            ${props.disableRemoveButton && "visibility: hidden"}
           }
         `}
       </style>
