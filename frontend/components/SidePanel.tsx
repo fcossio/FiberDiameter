@@ -14,8 +14,10 @@ const SidePanel = (props: Props) => {
   
   const addFiber = () => {
     let newFibers = [...fibers]
+    const newId = Math.max(...fibers.map(fiber => fiber.id)) + 1;
+    
     newFibers.push({
-      id: fibers.length + 1,
+      id: newId,
       color: randomColor(),
       diameter: 0,
       measurements: [
@@ -50,13 +52,13 @@ const SidePanel = (props: Props) => {
           </button>
         }
       >
-        {fibers.map((fiber, idx) => {
+        {fibers.map((fiber, key) => {
           const addMeasurement = () => {
             let newFibers = [...fibers];
 
-            const newId = newFibers[idx].measurements.length;
+            const newId = newFibers[key].measurements.length;
 
-            newFibers[idx].measurements.push({
+            newFibers[key].measurements.push({
               id: newId,
               type: "line",
               startX: 0.11,
@@ -68,7 +70,7 @@ const SidePanel = (props: Props) => {
           };
           const removeFiber = () => {
             setFibers((prevFibers) => {
-              prevFibers.splice(idx,1)
+              prevFibers.splice(key,1)
               return [...prevFibers];
             });
           };
