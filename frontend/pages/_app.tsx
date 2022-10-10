@@ -4,7 +4,7 @@ import type { AppProps } from 'next/app'
 
 function FiberDiameter({ Component, pageProps }: AppProps) {
   return <>
-  <Component {...pageProps} />;
+  <Component {...pageProps} />
   </>
 }
 

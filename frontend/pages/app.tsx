@@ -1,5 +1,6 @@
 import React from "react";
-import App from '../components/App';
+import dynamic from "next/dynamic";
+const App = dynamic(import('../components/App'), { ssr: false });
 
 const AppPage = () => {
   return (

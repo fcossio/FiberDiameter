@@ -2,7 +2,7 @@ import React from 'react'
 
 import dynamic from "next/dynamic";
 
-const MeasuredImage = dynamic(() => import('./MeasuredImage'), { ssr: false });
+import MeasuredImage from './MeasuredImage';
 
 interface Props {
 }

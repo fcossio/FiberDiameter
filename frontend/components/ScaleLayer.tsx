@@ -1,5 +1,3 @@
-import React from "react";
-
 import FiberLayer from "./FiberLayer";
 
 interface Props {
@@ -33,6 +31,7 @@ const ScaleLayer = (props: Props) => {
       onChange={props.onChange}
       measureLine={props.measureLine}
       measureCircle={props.measureCircle}
+      disableRemoveButton
     />
   );
 };
