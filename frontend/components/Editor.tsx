@@ -1,22 +1,17 @@
-import React, { FunctionComponent, useState} from 'react'
+import React from 'react'
 
 import dynamic from "next/dynamic";
 
 const MeasuredImage = dynamic(() => import('./MeasuredImage'), { ssr: false });
 
 interface Props {
-
 }
 
-const Editor: FunctionComponent<Props> = (props) => {
-  const [state, setState] = useState({
-    loaded: false,
-  });
-   const onImageLoaded = () => setState({ ...state, loaded: true });
+const Editor = (props: Props) => {
 
   return (
     <div>
-      <MeasuredImage onImageLoaded={onImageLoaded} />
+      <MeasuredImage/>
     </div>
   );
 }

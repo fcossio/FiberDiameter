@@ -1,6 +1,4 @@
-import io
 import os
-import json
 import numpy as np
 
 import torch
@@ -16,9 +14,7 @@ def load_task(data_dir: str, task_id: str):
     im = np.array(ImageOps.grayscale(im))
     im = im.reshape((1,) + im.shape).astype(np.float32) / 255  # one channel image
     # Load segmentation
-    seg: np.ndarray = (
-        np.load(os.path.join(data_dir, task_id + "_seg.npz"))["y"]
-    )
+    seg: np.ndarray = np.load(os.path.join(data_dir, task_id + "_seg.npz"))["y"]
     seg = np.moveaxis(seg, -1, 0)
     return im, seg
 
@@ -65,6 +61,8 @@ class FiberDataset(torch.utils.data.Dataset):
         return self.num_images
 
     def __getitem__(self, idx):
+        
+        if idx >= len(self): raise IndexError
 
         task_id = self.stage + str(idx).zfill(4)
 

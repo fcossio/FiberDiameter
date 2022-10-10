@@ -1,7 +1,11 @@
 import SystemMenu from "./SystemMenu";
-import FiberItem, { Props as FiberItemProps } from "./FiberItem";
-import Section from "./Section";
+import { Props as FiberItemProps } from "./FiberItem";
 import Editor from "./Editor";
+import { ChangeEvent, createContext, useState } from "react";
+import { useDebouncedState } from "@mantine/hooks";
+import SidePanel from "./SidePanel";
+  
+export const ScaleContext = createContext(0);
 
 const App = () => {
   let fibers: FiberItemProps[] = [
@@ -17,23 +21,38 @@ const App = () => {
     },
   ];
 
+  const [state, setState] = useState({
+    isValidScale: true,
+  });
+
+  
+  const [scaleLength, setScaleLength] = useDebouncedState(400, 200, {
+    leading: true,
+  });
+
+  const onScaleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    let value = event.target.value;
+    let number = parseFloat(value);
+    if (!Number.isNaN(number)) {    
+      setScaleLength(number);
+      setState({ ...state, isValidScale: true });
+    } else {
+      setState({ ...state, isValidScale: false });
+    }
+  }
+
   return (
     <div className='container'>
-      <SystemMenu className="w-full"/>
-      <div className="flex h-[90vh]">
-        
-      <div id='side-panel' className='w-1/4 bg-slate-300'>
-        <Section id='fibers' title='Fibers'>
-          {fibers.map((fiber) => (
-            <FiberItem key={fiber.id} {...fiber} />
-            ))}
-        </Section>
-        <Section id='globals' title='Globals'></Section>
-      </div>
-        <div id='editor' className='w-full bg-green-700'>
+      <ScaleContext.Provider value={scaleLength}>
+
+      <SystemMenu className='w-full' />
+      <div className='flex h-[90vh]'>
+        <SidePanel fibers={fibers} onScaleChange={onScaleChange} isValidScale={state.isValidScale}/>
+        <div id='editor' className='w-full bg-slate-200'>
           <Editor/>
+        </div>
       </div>
-            </div>
+      </ScaleContext.Provider>
     </div>
   );
 };
