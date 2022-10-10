@@ -1,4 +1,5 @@
 import io
+import json
 from typing import List, Tuple
 
 import imageio.v3 as iio
@@ -170,6 +171,22 @@ async def get_image(url):
     return np.array(im).astype(np.float32) / 255
 
 
+def convert_to_react_measurements_format(diameter, lines):
+    ans = []
+    for line in lines:
+        img_width = 256
+        img_height = 256
+        ans.append(
+            dict(
+                startX=line[0][0] / img_width,
+                startY=line[0][1] / img_height,
+                endX=line[1][0] / img_width,
+                endY=line[1][1] / img_height,
+            )
+        )
+    return json.dumps(dict(diameter=diameter, lines=ans))
+
+
 async def get_lines(img, selection_point: Tuple[int, int], inference_js_func=None):
     """Load the image and use the js inference function to obtain the segmentation.
 
@@ -190,9 +207,8 @@ async def get_lines(img, selection_point: Tuple[int, int], inference_js_func=Non
     ans = np.asarray(data.to_py()).reshape(dims.to_py())[0, :, :, 0]
     print(ans)
     # The array is ready to fit the lines
-    return line_fit.predict(
-        ans > 0.5
-    )  # TODO: output the format that is required by the react-measurements package
+    measurements = line_fit.predict(ans > 0.5)
+    return convert_to_react_measurements_format(*measurements)
 
 
 {"get_image": get_image, "get_lines": get_lines}

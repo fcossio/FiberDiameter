@@ -1,21 +1,23 @@
-import { ChangeEvent, useContext } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 import FiberItem from "./FiberItem";
 import Section from "./Section";
 import { ImageContext } from "./App";
 import Item from "./Item";
-import { AiOutlinePlus } from "react-icons/ai";
+import { AiOutlinePlus, AiOutlineThunderbolt, AiFillThunderbolt } from "react-icons/ai";
 import randomColor from "randomcolor";
+import { asyncRun } from '../worker/py-worker'
+
 interface Props {
   isValidScale: boolean;
   onScaleChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 const SidePanel = (props: Props) => {
   const { scaleLength, fibers, setFibers, setMagnitude } = useContext(ImageContext)!;
-  
+  const [thunder, setThunder] = useState(<AiOutlineThunderbolt/>)
   const addFiber = () => {
     let newFibers = [...fibers]
     const newId = Math.max(...fibers.map(fiber => fiber.id)) + 1;
-    
+
     newFibers.push({
       id: newId,
       color: randomColor(),
@@ -34,6 +36,15 @@ const SidePanel = (props: Props) => {
     setFibers(newFibers);
   };
 
+  const runInference = async () => {
+    setThunder(<AiFillThunderbolt/>)
+    let res = await asyncRun();
+    console.log(res)
+    console.log(JSON.parse(res.fiber_meas))
+    // await new Promise(resolve => setTimeout(resolve, 1000));
+    setThunder(<AiOutlineThunderbolt/>)
+  };
+
   return (
     <div
       id='side-panel'
@@ -44,12 +55,20 @@ const SidePanel = (props: Props) => {
         id='fibers'
         title='Fibers'
         actions={
-          <button
-            className='btn btn-xs btn-square btn-ghost'
-            onClick={addFiber}
-          >
-            <AiOutlinePlus />
-          </button>
+          <div>
+            <button
+              className='btn btn-xs btn-square btn-ghost'
+              onClick={runInference}
+            >
+            {thunder}
+            </button>
+            <button
+              className='btn btn-xs btn-square btn-ghost'
+              onClick={addFiber}
+            >
+              <AiOutlinePlus />
+            </button>
+          </div>
         }
       >
         {fibers.map((fiber, key) => {

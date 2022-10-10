@@ -1,4 +1,4 @@
-const pyodideWorker = new Worker("./webworker.js"); // TODO: move this to a nicer place
+const pyodideWorker = new Worker("webworker.js"); // TODO: move this to a nicer place
 
 const callbacks = {};
 
