@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.4.0 (2022-10-10)
+### Feature
+* **UI:** Add/remove fibers and measurements ([#18](https://github.com/fcossio/FiberDiameter/issues/18)) ([`984bf34`](https://github.com/fcossio/FiberDiameter/commit/984bf3495d7bb3cc9a0db3bc1bab0c0c98554e59))
+
 ## v0.3.0 (2022-10-07)
 ### Feature
 * **UI:** Add scale layer ([#16](https://github.com/fcossio/FiberDiameter/issues/16)) ([`a3d2064`](https://github.com/fcossio/FiberDiameter/commit/a3d2064f345cecd46e2948d9c3a6968eddc16b24))
