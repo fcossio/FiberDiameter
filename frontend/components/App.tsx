@@ -2,7 +2,7 @@ import SystemMenu from "./SystemMenu";
 import Editor from "./Editor";
 import { ChangeEvent, createContext, Dispatch, SetStateAction, useState } from "react";
 import SidePanel from "./SidePanel";
-import Fiber from "../types/Fiber";
+import { Dims, Fiber } from '../types';
 
 interface ImageContextType {
   imageDimsInPx: {
@@ -11,10 +11,13 @@ interface ImageContextType {
     x: number;
     y: number;
   };
+  realDims: { width: number; height: number };
+  setRealDims: Dispatch<SetStateAction<Dims>>;
   scaleLength: number;
   fibers: Fiber[];
   setFibers: Dispatch<SetStateAction<Fiber[]>>;
-  magnitude: string
+  magnitude: string;
+  setMagnitude: (magnitude: string) => void;
 }
 
 export const ImageContext = createContext<ImageContextType | undefined>(
@@ -72,6 +75,9 @@ const createInitialFibers = () =>
   ];
   
 const App = () => {
+  // image dimensions in real life
+  const [realDims, setRealDims] = useState({ width: 0, height: 0 });
+  
   const [fibers, setFibers] = useState<Fiber[]>(createInitialFibers());
 
   const [state, setState] = useState({
@@ -90,6 +96,11 @@ const App = () => {
     }
   };
 
+  const setMagnitude = (magnitude: string) => {
+    console.log(magnitude);
+    setState({ ...state, magnitude });
+  };
+
   return (
     <div className='container'>
       <ImageContext.Provider
@@ -103,13 +114,15 @@ const App = () => {
           scaleLength: state.scaleLength,
           fibers,
           setFibers,
-          magnitude: state.magnitude
+          magnitude: state.magnitude,
+          setMagnitude,
+          realDims,
+          setRealDims
         }}
       >
         <SystemMenu className='w-full' />
         <div className='flex h-[90vh]'>
           <SidePanel
-            fibers={fibers}
             onScaleChange={onScaleChange}
             isValidScale={state.isValidScale}
           />

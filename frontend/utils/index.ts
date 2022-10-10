@@ -52,3 +52,7 @@ export const calculateRealImageSize = (
     height: (imageDims.height * length) / pixel_length,
   };
 };
+
+export const average = (arr: number[]) => {
+  return arr.reduce((a, b) => a + b, 0) / arr.length
+}
