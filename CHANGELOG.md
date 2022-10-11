@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v0.5.0 (2022-10-11)
+### Feature
+* **UI:** Infer fibers with model ([`cd90ca1`](https://github.com/fcossio/FiberDiameter/commit/cd90ca18fa339f17ef1917fbfdb826ce9f4c828f))
+* **UI:** Wip Inference click ([`ad78d0e`](https://github.com/fcossio/FiberDiameter/commit/ad78d0e5d9744205922d271703205ac46f62a9c5))
+* **UI:** Run the model in the browser ([`104d02a`](https://github.com/fcossio/FiberDiameter/commit/104d02a28e91cbc670a790751706cb3e0f1a6835))
+
 ## v0.4.0 (2022-10-10)
 ### Feature
 * **UI:** Add/remove fibers and measurements ([#18](https://github.com/fcossio/FiberDiameter/issues/18)) ([`984bf34`](https://github.com/fcossio/FiberDiameter/commit/984bf3495d7bb3cc9a0db3bc1bab0c0c98554e59))
