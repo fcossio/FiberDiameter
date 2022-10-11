@@ -1,10 +1,12 @@
-import React, { memo, useEffect, useState, useContext } from "react";
+import { memo, useContext, useEffect, useState } from "react";
 
-import { calculateDistance, calculateArea } from "@coszio/react-measurements";
-import FiberLayer from "./FiberLayer";
+import { calculateArea, calculateDistance } from "@coszio/react-measurements";
 import { calculateRealImageSize, getObjectFitSize } from "../utils";
+import { AppContext } from "./App";
+import FiberLayer from "./FiberLayer";
 import ScaleLayer from "./ScaleLayer";
-import { ImageContext } from "./App";
+import { runAsync } from "../worker/py-worker";
+import { randomColor } from 'randomcolor';
 
 const initialScale = () => {
   return {
@@ -20,8 +22,12 @@ const initialScale = () => {
 interface Props {}
 
 const MeasuredImage = (props: Props) => {
-  const { scaleLength, fibers, setFibers, magnitude, realDims, setRealDims } =
-    useContext(ImageContext)!;
+  const {
+    fibers,
+    setFibers,
+    appState: { realDims, magnitude, scaleLength, isChoosingTarget, imagePath },
+    setAppState,
+  } = useContext(AppContext)!;
 
   const [state, setState] = useState({
     loaded: false,
@@ -63,17 +69,22 @@ const MeasuredImage = (props: Props) => {
 
   // update real scale of the image
   useEffect(() => {
-    setRealDims(
-      calculateRealImageSize(scaleMeasurement, scaleLength, imageDims)
-    );
-  }, [scaleMeasurement, imageDims, scaleLength, setRealDims]);
+    setAppState((prevAppState) => ({
+      ...prevAppState,
+      realDims: calculateRealImageSize(
+        scaleMeasurement,
+        scaleLength,
+        imageDims
+      ),
+    }));
+  }, [scaleMeasurement, imageDims, scaleLength, setAppState]);
 
   return (
-    <div className='relative'>
+    <div className="relative">
       <picture>
-        <source srcSet='/images/fibers.png' type='image/webp' />
+        <source srcSet={imagePath} type='image/webp' />
         <img
-          src='/images/fibers.png'
+          src={imagePath}
           alt='fibers image'
           ref={(e) => setImage(e!)}
           onLoad={onImageLoaded}
@@ -101,6 +112,40 @@ const MeasuredImage = (props: Props) => {
             onChange={(measurements) => setScaleMeasurement(measurements[0])}
             measureLine={(line) => "scale: " + measureLine(line)}
             measureCircle={measureCircle}
+          />
+          <div
+            className={`absolute object-contain opacity-10 ${
+              isChoosingTarget ? "bg-green-300 cursor-copy" : "pointer-events-none"
+            }`}
+            style={{
+              left: imageDims.x,
+              top: imageDims.y,
+              width: imageDims.width,
+              height: imageDims.height,
+            }}
+            onClick={async (event) => {
+              setAppState((prevState) => ({...prevState, isChoosingTarget: false}));
+              
+              const rect = event.currentTarget.getBoundingClientRect();
+
+              const x = (event.clientX - rect.left) / imageDims.width;
+              const y = (event.clientY - rect.top) / imageDims.height;
+              console.log(x, y);
+
+              const res = await runAsync(imagePath, [x, y]);
+              console.log(res);
+              const inferredFiber = JSON.parse(res.fiber);
+              console.log(inferredFiber);
+              setFibers((prevFibers) => {
+                const id = Math.max(...fibers.map((fiber) => fiber.id)) + 1;
+                const measurements = inferredFiber.lines.map((line: any, id: number) => ({...line, id, type: "line"}))
+                return [...prevFibers, {
+                  id,
+                  color: randomColor(),
+                  measurements,
+                }]
+              })
+            }}
           />
         </>
       )}

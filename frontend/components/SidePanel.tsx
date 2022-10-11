@@ -1,25 +1,36 @@
-import { ChangeEvent, useContext } from "react";
-import FiberItem from "./FiberItem";
-import Section from "./Section";
-import { ImageContext } from "./App";
-import Item from "./Item";
-import { AiOutlinePlus } from "react-icons/ai";
 import randomColor from "randomcolor";
+import { ChangeEvent, useContext, useState } from "react";
+import {
+  AiFillThunderbolt,
+  AiOutlinePlus,
+  AiOutlineThunderbolt,
+} from "react-icons/ai";
+import { runAsync } from "../worker/py-worker";
+import { AppContext } from "./App";
+import FiberItem from "./FiberItem";
+import Item from "./Item";
+import Section from "./Section";
+
 interface Props {
   isValidScale: boolean;
   onScaleChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 const SidePanel = (props: Props) => {
-  const { scaleLength, fibers, setFibers, setMagnitude } = useContext(ImageContext)!;
+  const {
+    appState: { scaleLength, imagePath },
+    fibers,
+    setFibers,
+    setAppState,
+  } = useContext(AppContext)!;
   
+  const [thunder, setThunder] = useState(<AiOutlineThunderbolt />);
   const addFiber = () => {
-    let newFibers = [...fibers]
-    const newId = Math.max(...fibers.map(fiber => fiber.id)) + 1;
-    
+    let newFibers = [...fibers];
+    const newId = Math.max(...fibers.map((fiber) => fiber.id)) + 1;
+
     newFibers.push({
       id: newId,
       color: randomColor(),
-      diameter: 0,
       measurements: [
         {
           id: 0,
@@ -34,6 +45,18 @@ const SidePanel = (props: Props) => {
     setFibers(newFibers);
   };
 
+  const chooseTarget = () => {
+    setAppState(prevAppState => ({ ...prevAppState, isChoosingTarget: !prevAppState.isChoosingTarget }))
+  }
+  
+  const runInference = async () => {
+    setThunder(<AiFillThunderbolt />);
+    let res = await runAsync(imagePath, [0.6, 0.24]);
+    console.log(res);
+    console.log(JSON.parse(res.fiber_meas));
+    setThunder(<AiOutlineThunderbolt />);
+  };
+
   return (
     <div
       id='side-panel'
@@ -44,12 +67,20 @@ const SidePanel = (props: Props) => {
         id='fibers'
         title='Fibers'
         actions={
-          <button
-            className='btn btn-xs btn-square btn-ghost'
-            onClick={addFiber}
-          >
-            <AiOutlinePlus />
-          </button>
+          <div>
+            <button
+              className='btn btn-xs btn-square btn-ghost'
+              onClick={chooseTarget}
+            >
+              {thunder}
+            </button>
+            <button
+              className='btn btn-xs btn-square btn-ghost'
+              onClick={addFiber}
+            >
+              <AiOutlinePlus />
+            </button>
+          </div>
         }
       >
         {fibers.map((fiber, key) => {
@@ -70,7 +101,7 @@ const SidePanel = (props: Props) => {
           };
           const removeFiber = () => {
             setFibers((prevFibers) => {
-              prevFibers.splice(key,1)
+              prevFibers.splice(key, 1);
               return [...prevFibers];
             });
           };
@@ -98,7 +129,12 @@ const SidePanel = (props: Props) => {
           />
           <select
             className='w-16 m-1 rounded-sm select select-ghost select-xs'
-            onChange={(event) => setMagnitude(event.target.value)}
+            onChange={(event) =>
+              setAppState((prevAppState) => ({
+                ...prevAppState,
+                magnitude: event.target.value,
+              }))
+            }
             defaultValue='nm'
           >
             <option value='nm'>nm</option>

@@ -1,89 +1,52 @@
-import SystemMenu from "./SystemMenu";
+import { StaticImageData } from "next/image";
+import {
+  ChangeEvent,
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useState,
+} from "react";
+import { Dims, Fiber } from "../types";
 import Editor from "./Editor";
-import { ChangeEvent, createContext, Dispatch, SetStateAction, useState } from "react";
 import SidePanel from "./SidePanel";
-import { Dims, Fiber } from '../types';
+import SystemMenu from "./SystemMenu";
 
-interface ImageContextType {
+interface State {
+  isValidScale: boolean;
+  magnitude: string;
+  scaleLength: number;
+  realDims: { width: number; height: number };
+  isChoosingTarget: boolean;
+  imagePath: string;
+}
+
+interface AppContextType {
   imageDimsInPx: {
     width: number;
     height: number;
     x: number;
     y: number;
   };
-  realDims: { width: number; height: number };
-  setRealDims: Dispatch<SetStateAction<Dims>>;
-  scaleLength: number;
   fibers: Fiber[];
   setFibers: Dispatch<SetStateAction<Fiber[]>>;
-  magnitude: string;
-  setMagnitude: (magnitude: string) => void;
+  appState: State;
+  setAppState: Dispatch<SetStateAction<State>>;
 }
 
-export const ImageContext = createContext<ImageContextType | undefined>(
-  undefined
-);
+export const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const createInitialFibers = () =>
-  [
-    {
-      id: 1,
-      color: "#94DC38",
-      diameter: 13.254,
-      measurements: [
-        {
-          id: 0,
-          type: "line",
-          startX: 0.183,
-          startY: 0.33,
-          endX: 0.316,
-          endY: 0.224,
-        },
-        {
-          id: 1,
-          type: "line",
-          startX: 0.183,
-          startY: 0.43,
-          endX: 0.416,
-          endY: 0.424,
-        },
-      ],
-    },
-    {
-      id: 2,
-      color: "#DC38B8",
-      diameter: 14.432,
-      measurements: [
-        {
-          id: 0,
-          type: "line",
-          startX: 0.63,
-          startY: 0.44,
-          endX: 0.216,
-          endY: 0.324,
-        },
-        {
-          id: 1,
-          type: "line",
-          startX: 0.183,
-          startY: 0.43,
-          endX: 0.416,
-          endY: 0.424,
-        },
-      ],
-    },
-  ];
-  
 const App = () => {
-  // image dimensions in real life
-  const [realDims, setRealDims] = useState({ width: 0, height: 0 });
-  
-  const [fibers, setFibers] = useState<Fiber[]>(createInitialFibers());
+  // fibers along with their measurements
+  const [fibers, setFibers] = useState<Fiber[]>([]);
 
+  // other "cheap" state changes
   const [state, setState] = useState({
     isValidScale: true,
     magnitude: "nm",
     scaleLength: 400,
+    realDims: { width: 0, height: 0 },
+    isChoosingTarget: false,
+    imagePath: "/images/fibers.png",
   });
 
   const onScaleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -96,14 +59,9 @@ const App = () => {
     }
   };
 
-  const setMagnitude = (magnitude: string) => {
-    console.log(magnitude);
-    setState({ ...state, magnitude });
-  };
-
   return (
     <div className='container'>
-      <ImageContext.Provider
+      <AppContext.Provider
         value={{
           imageDimsInPx: {
             width: 0,
@@ -111,13 +69,10 @@ const App = () => {
             x: 0,
             y: 0,
           },
-          scaleLength: state.scaleLength,
           fibers,
           setFibers,
-          magnitude: state.magnitude,
-          setMagnitude,
-          realDims,
-          setRealDims
+          appState: state,
+          setAppState: setState,
         }}
       >
         <SystemMenu className='w-full' />
@@ -130,7 +85,7 @@ const App = () => {
             <Editor />
           </div>
         </div>
-      </ImageContext.Provider>
+      </AppContext.Provider>
     </div>
   );
 };

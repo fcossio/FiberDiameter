@@ -1,18 +1,20 @@
-import React, { useContext } from "react";
-import Item from "./Item";
+import { calculateDistance } from "@coszio/react-measurements";
+import { useContext } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
+import { FaTimes } from "react-icons/fa";
 import { Fiber, Line } from "../types";
 import { average } from "../utils";
-import { ImageContext } from "./App";
-import { calculateDistance } from "@coszio/react-measurements";
-import { FaTimes, FaMinus } from "react-icons/fa";
+import { AppContext } from "./App";
+import Item from "./Item";
 export interface Props {
   addMeasurement: () => void;
   removeFiber: () => void;
 }
 
 const FiberItem = (props: Props & Fiber) => {
-  const { realDims } = useContext(ImageContext)!;
+  const {
+    appState: { realDims },
+  } = useContext(AppContext)!;
 
   const lengths = props.measurements.map((line: Line) =>
     calculateDistance(line, realDims.width, realDims.height)
