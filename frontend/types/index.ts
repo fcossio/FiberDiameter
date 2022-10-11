@@ -1,7 +1,6 @@
 export interface Fiber {
   id: number;
   color: string;
-  diameter: number;
   measurements: Line[];
 }
 

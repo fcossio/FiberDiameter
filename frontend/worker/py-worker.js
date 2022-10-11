@@ -4,25 +4,31 @@ const callbacks = {};
 
 pyodideWorker.onmessage = (event) => {
   const { id, ...data } = event.data;
+  console.log(data);
+  console.log("id: " + id);
   const onSuccess = callbacks[id];
   delete callbacks[id];
   onSuccess(data);
 };
 
-export const runAsync = ((img_url) => {
+// pyodideWorker.onerror = (event) => {
+//   console.log(event)
+// };
+
+export const runAsync = (() => {
   let id = 0; // identify a Promise
-  return (script, context) => {
-    // TODO: script is no longer needed, but we want to pass the image_url and the location of the click
+  return (imgPath, targetCoords) => { 
     // the id could be generated more carefully
     id = (id + 1) % Number.MAX_SAFE_INTEGER;
     return new Promise((onSuccess) => {
+      console.log(onSuccess);
+      console.log("Entered the promise")
       callbacks[id] = onSuccess;
       pyodideWorker.postMessage({
-        ...context,
-        python: script, //TODO: modifiy args
-        img_url: img_url,
-        id,
+        imgPath,
+        targetCoords,
+        id
       });
-    });
+    })
   };
 })();

@@ -5,6 +5,8 @@ import { calculateRealImageSize, getObjectFitSize } from "../utils";
 import { AppContext } from "./App";
 import FiberLayer from "./FiberLayer";
 import ScaleLayer from "./ScaleLayer";
+import { runAsync } from "../worker/py-worker";
+import { randomColor } from 'randomcolor';
 
 const initialScale = () => {
   return {
@@ -23,7 +25,7 @@ const MeasuredImage = (props: Props) => {
   const {
     fibers,
     setFibers,
-    appState: { realDims, magnitude, scaleLength, isChoosingTarget },
+    appState: { realDims, magnitude, scaleLength, isChoosingTarget, imagePath },
     setAppState,
   } = useContext(AppContext)!;
 
@@ -78,11 +80,11 @@ const MeasuredImage = (props: Props) => {
   }, [scaleMeasurement, imageDims, scaleLength, setAppState]);
 
   return (
-    <div className={`relative ${isChoosingTarget && "cursor-copy"}`}>
+    <div className="relative">
       <picture>
-        <source srcSet='/images/fibers.png' type='image/webp' />
+        <source srcSet={imagePath} type='image/webp' />
         <img
-          src='/images/fibers.png'
+          src={imagePath}
           alt='fibers image'
           ref={(e) => setImage(e!)}
           onLoad={onImageLoaded}
@@ -110,6 +112,40 @@ const MeasuredImage = (props: Props) => {
             onChange={(measurements) => setScaleMeasurement(measurements[0])}
             measureLine={(line) => "scale: " + measureLine(line)}
             measureCircle={measureCircle}
+          />
+          <div
+            className={`absolute object-contain opacity-10 ${
+              isChoosingTarget ? "bg-green-300 cursor-copy" : "pointer-events-none"
+            }`}
+            style={{
+              left: imageDims.x,
+              top: imageDims.y,
+              width: imageDims.width,
+              height: imageDims.height,
+            }}
+            onClick={async (event) => {
+              setAppState((prevState) => ({...prevState, isChoosingTarget: false}));
+              
+              const rect = event.currentTarget.getBoundingClientRect();
+
+              const x = (event.clientX - rect.left) / imageDims.width;
+              const y = (event.clientY - rect.top) / imageDims.height;
+              console.log(x, y);
+
+              const res = await runAsync(imagePath, [x, y]);
+              console.log(res);
+              const inferredFiber = JSON.parse(res.fiber);
+              console.log(inferredFiber);
+              setFibers((prevFibers) => {
+                const id = Math.max(...fibers.map((fiber) => fiber.id)) + 1;
+                const measurements = inferredFiber.lines.map((line: any, id: number) => ({...line, id, type: "line"}))
+                return [...prevFibers, {
+                  id,
+                  color: randomColor(),
+                  measurements,
+                }]
+              })
+            }}
           />
         </>
       )}

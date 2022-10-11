@@ -17,6 +17,7 @@ interface State {
   scaleLength: number;
   realDims: { width: number; height: number };
   isChoosingTarget: boolean;
+  imagePath: string;
 }
 
 interface AppContextType {
@@ -34,58 +35,9 @@ interface AppContextType {
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const createInitialFibers = () => [
-  {
-    id: 1,
-    color: "#94DC38",
-    diameter: 13.254,
-    measurements: [
-      {
-        id: 0,
-        type: "line",
-        startX: 0.183,
-        startY: 0.33,
-        endX: 0.316,
-        endY: 0.224,
-      },
-      {
-        id: 1,
-        type: "line",
-        startX: 0.183,
-        startY: 0.43,
-        endX: 0.416,
-        endY: 0.424,
-      },
-    ],
-  },
-  {
-    id: 2,
-    color: "#DC38B8",
-    diameter: 14.432,
-    measurements: [
-      {
-        id: 0,
-        type: "line",
-        startX: 0.63,
-        startY: 0.44,
-        endX: 0.216,
-        endY: 0.324,
-      },
-      {
-        id: 1,
-        type: "line",
-        startX: 0.183,
-        startY: 0.43,
-        endX: 0.416,
-        endY: 0.424,
-      },
-    ],
-  },
-];
-
 const App = () => {
   // fibers along with their measurements
-  const [fibers, setFibers] = useState<Fiber[]>(createInitialFibers());
+  const [fibers, setFibers] = useState<Fiber[]>([]);
 
   // other "cheap" state changes
   const [state, setState] = useState({
@@ -94,6 +46,7 @@ const App = () => {
     scaleLength: 400,
     realDims: { width: 0, height: 0 },
     isChoosingTarget: false,
+    imagePath: "/images/fibers.png",
   });
 
   const onScaleChange = (event: ChangeEvent<HTMLInputElement>) => {

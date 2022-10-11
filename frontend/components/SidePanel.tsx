@@ -17,7 +17,7 @@ interface Props {
 }
 const SidePanel = (props: Props) => {
   const {
-    appState: { scaleLength },
+    appState: { scaleLength, imagePath },
     fibers,
     setFibers,
     setAppState,
@@ -31,7 +31,6 @@ const SidePanel = (props: Props) => {
     newFibers.push({
       id: newId,
       color: randomColor(),
-      diameter: 0,
       measurements: [
         {
           id: 0,
@@ -49,9 +48,10 @@ const SidePanel = (props: Props) => {
   const chooseTarget = () => {
     setAppState(prevAppState => ({ ...prevAppState, isChoosingTarget: !prevAppState.isChoosingTarget }))
   }
+  
   const runInference = async () => {
     setThunder(<AiFillThunderbolt />);
-    let res = await runAsync();
+    let res = await runAsync(imagePath, [0.6, 0.24]);
     console.log(res);
     console.log(JSON.parse(res.fiber_meas));
     setThunder(<AiOutlineThunderbolt />);

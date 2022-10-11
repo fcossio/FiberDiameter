@@ -167,6 +167,7 @@ async def get_image(url):
     ans = await response.bytes()
     ans = iio.imread(io.BytesIO(ans))
     im = Image.fromarray(ans).convert("L")
+    im = im.resize((256,256))
     print("Read image of size", im.size, "with values between", np.min(im), np.max(im))
     return np.array(im).astype(np.float32) / 255
 
@@ -187,23 +188,30 @@ def convert_to_react_measurements_format(diameter, lines):
     return json.dumps(dict(diameter=diameter, lines=ans))
 
 
-async def get_lines(img, selection_point: Tuple[int, int], inference_js_func=None):
+async def get_lines(img, selection_point: Tuple[float, float], inference_js_func=None):
     """Load the image and use the js inference function to obtain the segmentation.
 
     :param img: the image to be processed. the output of get_image.
     :param selection_point: the coordinates (x, y) where the pixel should be selected.
     :param inference_js_func: the handle for the js function that runs inference.
     """
+    print(f"Entered get_lines correctly with {img.shape} {selection_point}")
     selection = np.zeros_like(img)
     x, y = selection_point
+    x = int(256 * x)
+    y = int(256 * y)
+    print(f"Selected coords in python are {selection_point} that get converted to {x}, {y}")
     selection[y, x] = 1.0
     seg_input = np.stack([img, selection], axis=-1)
     seg_input = seg_input[np.newaxis, :, :, :]
+    print("line 207")
     # The ort Tensor requires a flat list and the dimentions
     arr_dim = to_js([int(x) for x in seg_input.shape])
     flat_img_array = to_js(seg_input.flatten().tolist())
+    print("line 211")
     # Run the model in WASM with our js func
     data, dims = await inference_js_func(flat_img_array, arr_dim)
+    print("line 214")
     ans = np.asarray(data.to_py()).reshape(dims.to_py())[0, :, :, 0]
     print(ans)
     # The array is ready to fit the lines
