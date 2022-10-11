@@ -9,9 +9,10 @@ pyodideWorker.onmessage = (event) => {
   onSuccess(data);
 };
 
-const asyncRun = ((img_url) => {
+export const runAsync = ((img_url) => {
   let id = 0; // identify a Promise
-  return (script, context) => { // TODO: script is no longer needed, but we want to pass the image_url and the location of the click
+  return (script, context) => {
+    // TODO: script is no longer needed, but we want to pass the image_url and the location of the click
     // the id could be generated more carefully
     id = (id + 1) % Number.MAX_SAFE_INTEGER;
     return new Promise((onSuccess) => {
@@ -25,5 +26,3 @@ const asyncRun = ((img_url) => {
     });
   };
 })();
-
-export { asyncRun };

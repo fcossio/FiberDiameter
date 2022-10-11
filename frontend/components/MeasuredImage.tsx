@@ -1,10 +1,10 @@
-import React, { memo, useEffect, useState, useContext } from "react";
+import { memo, useContext, useEffect, useState } from "react";
 
-import { calculateDistance, calculateArea } from "@coszio/react-measurements";
-import FiberLayer from "./FiberLayer";
+import { calculateArea, calculateDistance } from "@coszio/react-measurements";
 import { calculateRealImageSize, getObjectFitSize } from "../utils";
+import { AppContext } from "./App";
+import FiberLayer from "./FiberLayer";
 import ScaleLayer from "./ScaleLayer";
-import { ImageContext } from "./App";
 
 const initialScale = () => {
   return {
@@ -20,8 +20,12 @@ const initialScale = () => {
 interface Props {}
 
 const MeasuredImage = (props: Props) => {
-  const { scaleLength, fibers, setFibers, magnitude, realDims, setRealDims } =
-    useContext(ImageContext)!;
+  const {
+    fibers,
+    setFibers,
+    appState: { realDims, magnitude, scaleLength, isChoosingTarget },
+    setAppState,
+  } = useContext(AppContext)!;
 
   const [state, setState] = useState({
     loaded: false,
@@ -63,13 +67,18 @@ const MeasuredImage = (props: Props) => {
 
   // update real scale of the image
   useEffect(() => {
-    setRealDims(
-      calculateRealImageSize(scaleMeasurement, scaleLength, imageDims)
-    );
-  }, [scaleMeasurement, imageDims, scaleLength, setRealDims]);
+    setAppState((prevAppState) => ({
+      ...prevAppState,
+      realDims: calculateRealImageSize(
+        scaleMeasurement,
+        scaleLength,
+        imageDims
+      ),
+    }));
+  }, [scaleMeasurement, imageDims, scaleLength, setAppState]);
 
   return (
-    <div className='relative'>
+    <div className={`relative ${isChoosingTarget && "cursor-copy"}`}>
       <picture>
         <source srcSet='/images/fibers.png' type='image/webp' />
         <img

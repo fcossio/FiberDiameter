@@ -1,22 +1,32 @@
-import { ChangeEvent, useContext, useState } from "react";
-import FiberItem from "./FiberItem";
-import Section from "./Section";
-import { ImageContext } from "./App";
-import Item from "./Item";
-import { AiOutlinePlus, AiOutlineThunderbolt, AiFillThunderbolt } from "react-icons/ai";
 import randomColor from "randomcolor";
-import { asyncRun } from '../worker/py-worker'
+import { ChangeEvent, useContext, useState } from "react";
+import {
+  AiFillThunderbolt,
+  AiOutlinePlus,
+  AiOutlineThunderbolt,
+} from "react-icons/ai";
+import { runAsync } from "../worker/py-worker";
+import { AppContext } from "./App";
+import FiberItem from "./FiberItem";
+import Item from "./Item";
+import Section from "./Section";
 
 interface Props {
   isValidScale: boolean;
   onScaleChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 const SidePanel = (props: Props) => {
-  const { scaleLength, fibers, setFibers, setMagnitude } = useContext(ImageContext)!;
-  const [thunder, setThunder] = useState(<AiOutlineThunderbolt/>)
+  const {
+    appState: { scaleLength },
+    fibers,
+    setFibers,
+    setAppState,
+  } = useContext(AppContext)!;
+  
+  const [thunder, setThunder] = useState(<AiOutlineThunderbolt />);
   const addFiber = () => {
-    let newFibers = [...fibers]
-    const newId = Math.max(...fibers.map(fiber => fiber.id)) + 1;
+    let newFibers = [...fibers];
+    const newId = Math.max(...fibers.map((fiber) => fiber.id)) + 1;
 
     newFibers.push({
       id: newId,
@@ -36,13 +46,15 @@ const SidePanel = (props: Props) => {
     setFibers(newFibers);
   };
 
+  const chooseTarget = () => {
+    setAppState(prevAppState => ({ ...prevAppState, isChoosingTarget: !prevAppState.isChoosingTarget }))
+  }
   const runInference = async () => {
-    setThunder(<AiFillThunderbolt/>)
-    let res = await asyncRun();
-    console.log(res)
-    console.log(JSON.parse(res.fiber_meas))
-    // await new Promise(resolve => setTimeout(resolve, 1000));
-    setThunder(<AiOutlineThunderbolt/>)
+    setThunder(<AiFillThunderbolt />);
+    let res = await runAsync();
+    console.log(res);
+    console.log(JSON.parse(res.fiber_meas));
+    setThunder(<AiOutlineThunderbolt />);
   };
 
   return (
@@ -58,9 +70,9 @@ const SidePanel = (props: Props) => {
           <div>
             <button
               className='btn btn-xs btn-square btn-ghost'
-              onClick={runInference}
+              onClick={chooseTarget}
             >
-            {thunder}
+              {thunder}
             </button>
             <button
               className='btn btn-xs btn-square btn-ghost'
@@ -89,7 +101,7 @@ const SidePanel = (props: Props) => {
           };
           const removeFiber = () => {
             setFibers((prevFibers) => {
-              prevFibers.splice(key,1)
+              prevFibers.splice(key, 1);
               return [...prevFibers];
             });
           };
@@ -117,7 +129,12 @@ const SidePanel = (props: Props) => {
           />
           <select
             className='w-16 m-1 rounded-sm select select-ghost select-xs'
-            onChange={(event) => setMagnitude(event.target.value)}
+            onChange={(event) =>
+              setAppState((prevAppState) => ({
+                ...prevAppState,
+                magnitude: event.target.value,
+              }))
+            }
             defaultValue='nm'
           >
             <option value='nm'>nm</option>
