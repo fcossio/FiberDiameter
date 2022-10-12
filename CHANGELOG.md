@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.5.1 (2022-10-12)
+### Fix
+* **UI:** Add correct id and color to fibers ([`4b97adb`](https://github.com/fcossio/FiberDiameter/commit/4b97adb4aa72da635004a9a65d19b4ee3e816356))
+
 ## v0.5.0 (2022-10-11)
 ### Feature
 * **UI:** Infer fibers with model ([`cd90ca1`](https://github.com/fcossio/FiberDiameter/commit/cd90ca18fa339f17ef1917fbfdb826ce9f4c828f))
