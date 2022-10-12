@@ -167,7 +167,7 @@ async def get_image(url):
     ans = await response.bytes()
     ans = iio.imread(io.BytesIO(ans))
     im = Image.fromarray(ans).convert("L")
-    im = im.resize((256,256))
+    im = im.resize((256, 256))
     print("Read image of size", im.size, "with values between", np.min(im), np.max(im))
     return np.array(im).astype(np.float32) / 255
 
@@ -185,7 +185,7 @@ def convert_to_react_measurements_format(diameter, lines):
                 endY=line[1][1] / img_height,
             )
         )
-    return json.dumps(dict(diameter=diameter, lines=ans))
+    return json.dumps(dict(lines=ans))
 
 
 async def get_lines(img, selection_point: Tuple[float, float], inference_js_func=None):
@@ -200,7 +200,9 @@ async def get_lines(img, selection_point: Tuple[float, float], inference_js_func
     x, y = selection_point
     x = int(256 * x)
     y = int(256 * y)
-    print(f"Selected coords in python are {selection_point} that get converted to {x}, {y}")
+    print(
+        f"Selected coords in python are {selection_point} that get converted to {x}, {y}"
+    )
     selection[y, x] = 1.0
     seg_input = np.stack([img, selection], axis=-1)
     seg_input = seg_input[np.newaxis, :, :, :]
