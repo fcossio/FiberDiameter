@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.0 (2022-10-12)
+### Feature
+* **UI:** Improve inference flow with magic wand ([#28](https://github.com/fcossio/FiberDiameter/issues/28)) ([`964f8e3`](https://github.com/fcossio/FiberDiameter/commit/964f8e394989b143f7f2a709f2afb85dc4374dc0))
+
 ## v0.5.1 (2022-10-12)
 ### Fix
 * **UI:** Add correct id and color to fibers ([`4b97adb`](https://github.com/fcossio/FiberDiameter/commit/4b97adb4aa72da635004a9a65d19b4ee3e816356))
