@@ -6,7 +6,8 @@ import { AppContext } from "./App";
 import FiberLayer from "./FiberLayer";
 import ScaleLayer from "./ScaleLayer";
 import { runAsync } from "../worker/py-worker";
-import { randomColor } from 'randomcolor';
+import { randomColor } from "randomcolor";
+import InferencePointer from "./InferencePointer";
 
 const initialScale = () => {
   return {
@@ -26,7 +27,15 @@ const MeasuredImage = (props: Props) => {
     fibers,
     setFibers,
     addFiber,
-    appState: { realDims, magnitude, scaleLength, isChoosingTarget, imagePath },
+    appState: {
+      realDims,
+      htmlImageDims,
+      magnitude,
+      scaleLength,
+      isChoosingTarget,
+      imagePath,
+      pendingInferences,
+    },
     setAppState,
   } = useContext(AppContext)!;
 
@@ -36,9 +45,6 @@ const MeasuredImage = (props: Props) => {
   const [scaleMeasurement, setScaleMeasurement] = useState(initialScale());
 
   const [image, setImage] = useState(new Image());
-
-  // image dimensions in pixels
-  const [imageDims, setImageDims] = useState(getObjectFitSize(true, image));
 
   const onLayerChange = (fiberKey: number, measurements: any) => {
     setFibers((prevFibers) => {
@@ -62,7 +68,10 @@ const MeasuredImage = (props: Props) => {
   // update size of measurement layers
   useEffect(() => {
     const onImageBoundsChanged = () =>
-      setImageDims(getObjectFitSize(true, image));
+      setAppState((prevAppState) => ({
+        ...prevAppState,
+        htmlImageDims: getObjectFitSize(true, image),
+      }));
 
     window.addEventListener("resize", onImageBoundsChanged);
     onImageBoundsChanged();
@@ -72,16 +81,17 @@ const MeasuredImage = (props: Props) => {
   useEffect(() => {
     setAppState((prevAppState) => ({
       ...prevAppState,
+      htmlImageDims,
       realDims: calculateRealImageSize(
         scaleMeasurement,
         scaleLength,
-        imageDims
+        htmlImageDims
       ),
     }));
-  }, [scaleMeasurement, imageDims, scaleLength, setAppState]);
+  }, [scaleMeasurement, htmlImageDims, scaleLength, setAppState]);
 
   return (
-    <div className="relative">
+    <div className='relative'>
       <picture>
         <source srcSet={imagePath} type='image/webp' />
         <img
@@ -100,7 +110,6 @@ const MeasuredImage = (props: Props) => {
               fiberId={fiber.id}
               measurements={fiber.measurements}
               color={fiber.color}
-              imageDims={imageDims}
               onChange={(measurements) => onLayerChange(key, measurements)}
               measureLine={measureLine}
               measureCircle={measureCircle}
@@ -109,36 +118,71 @@ const MeasuredImage = (props: Props) => {
           <ScaleLayer
             measurement={scaleMeasurement}
             color={"#FAFAFA"}
-            imageDims={imageDims}
             onChange={(measurements) => setScaleMeasurement(measurements[0])}
             measureLine={(line) => "scale: " + measureLine(line)}
             measureCircle={measureCircle}
           />
+          {pendingInferences.map((props, key) => {
+            return (
+              <InferencePointer
+                key={key}
+                {...props}
+              />
+            );
+          })}
           <div
             className={`absolute object-contain opacity-10 ${
-              isChoosingTarget ? "bg-green-300 cursor-copy" : "pointer-events-none"
+              isChoosingTarget
+                ? "bg-green-300 cursor-wand"
+                : "pointer-events-none"
             }`}
             style={{
-              left: imageDims.x,
-              top: imageDims.y,
-              width: imageDims.width,
-              height: imageDims.height,
+              left: htmlImageDims.x,
+              top: htmlImageDims.y,
+              width: htmlImageDims.width,
+              height: htmlImageDims.height,
             }}
             onClick={async (event) => {
-              setAppState((prevState) => ({...prevState, isChoosingTarget: false}));
+              setAppState((prevState) => ({
+                ...prevState,
+                isChoosingTarget: false,
+              }));
               
               const rect = event.currentTarget.getBoundingClientRect();
-
-              const x = (event.clientX - rect.left) / imageDims.width;
-              const y = (event.clientY - rect.top) / imageDims.height;
+              
+              const x = (event.clientX - rect.left) / htmlImageDims.width;
+              const y = (event.clientY - rect.top) / htmlImageDims.height;
+              const color = randomColor();
               console.log(x, y);
+              
+              // add inference mark
+              const id = Math.max(0, ...pendingInferences.map((req) => req.id)) + 1;
+              console.log("new inference request, id: " + id);
+              setAppState((prevState) => {
+                prevState.pendingInferences.push({ x, y, color, id });
+                return {
+                ...prevState,
+                pendingInferences: [...prevState.pendingInferences]
+              }});
 
-              console.time('inference')
+              console.time("inference");
               const res = await runAsync(imagePath, [x, y]);
+              console.log(res);
               const inferredFiber = JSON.parse(res.fiber);
-              const measurements = inferredFiber.lines.map((line: any, id: number) => ({...line, id, type: "line"}))
-              addFiber(measurements);
-              console.timeEnd('inference')
+              const measurements = inferredFiber.lines.map(
+                (line: any, id: number) => ({ ...line, id, type: "line" })
+              );
+              addFiber(measurements, color);
+              
+              // remove inference mark
+              setAppState((prevState) => {
+                const popIndex = prevState.pendingInferences.findIndex(req => req.id == id);
+                prevState.pendingInferences.splice(popIndex, 1);
+                return {
+                ...prevState,
+                pendingInferences: [...prevState.pendingInferences]
+              }});
+              console.timeEnd("inference");
             }}
           />
         </>

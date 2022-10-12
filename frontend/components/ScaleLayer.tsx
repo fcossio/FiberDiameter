@@ -1,21 +1,9 @@
+import { Line } from "../types";
 import FiberLayer from "./FiberLayer";
 
 interface Props {
-  measurement: {
-    id: number;
-    type: string;
-    startX: number;
-    startY: number;
-    endX: number;
-    endY: number;
-  };
+  measurement: Line;
   color: string;
-  imageDims: {
-    width: number;
-    height: number;
-    x: number;
-    y: number;
-  };
   onChange: (measurements: any) => void;
   measureLine: (line: any) => string;
   measureCircle: (circle: any) => string;
@@ -27,7 +15,6 @@ const ScaleLayer = (props: Props) => {
       fiberId={-1}
       measurements={[props.measurement]}
       color={props.color}
-      imageDims={props.imageDims}
       onChange={props.onChange}
       measureLine={props.measureLine}
       measureCircle={props.measureCircle}

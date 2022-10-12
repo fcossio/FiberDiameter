@@ -9,7 +9,7 @@ const Section = (props: Props & React.ComponentPropsWithoutRef<"div">) => {
     <div className={`text-slate-500 ${props.className}`}>
       <div className='flex items-center justify-between w-auto h-6 group bg-slate-100'>
         <p className='pl-2 text-slate-700'>{props.title}</p>
-        <div className='hidden group-hover:block'>
+        <div className=''>
           {props.actions}
         </div>
       </div>

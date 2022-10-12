@@ -1,24 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import { MeasurementLayer } from "@coszio/react-measurements";
+import { AppContext } from "./App";
+import { Line } from "../types";
 
 interface Props {
   fiberId: number;
-  measurements: {
-        id: number,
-        type: string,
-        startX: number,
-        startY: number,
-        endX: number,
-        endY: number,
-  }[];
+  measurements: Line[];
   color: string;
-  imageDims: {
-    width: number;
-    height: number;
-    x: number;
-    y: number;
-  };
   onChange: (measurements: any) => void;
   measureLine: (line: any) => string;
   measureCircle: (circle: any) => string;
@@ -26,21 +15,22 @@ interface Props {
 }
 
 const FiberLayer = (props: Props) => {
+  const { appState: { htmlImageDims } } = useContext(AppContext)!;
   return (
     <div
       id={`layer${props.fiberId}`}
       className='absolute pointer-events-none'
       style={{
-        width: `${props.imageDims.width}px`,
-        height: `${props.imageDims.height}px`,
-        top: `${props.imageDims.y}px`,
-        left: `${props.imageDims.x}px`,
+        width: `${htmlImageDims.width}px`,
+        height: `${htmlImageDims.height}px`,
+        top: `${htmlImageDims.y}px`,
+        left: `${htmlImageDims.x}px`,
       }}
     >
       <MeasurementLayer
         measurements={props.measurements}
-        widthInPx={props.imageDims.width}
-        heightInPx={props.imageDims.height}
+        widthInPx={htmlImageDims.width}
+        heightInPx={htmlImageDims.height}
         onChange={props.onChange}
         measureLine={props.measureLine}
         measureCircle={props.measureCircle}
