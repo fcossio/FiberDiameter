@@ -2,6 +2,9 @@
 
 <!--next-version-placeholder-->
 
+## v0.6.1 (2022-10-12)
+
+
 ## v0.6.0 (2022-10-12)
 ### Feature
 * **UI:** Improve inference flow with magic wand ([#28](https://github.com/fcossio/FiberDiameter/issues/28)) ([`964f8e3`](https://github.com/fcossio/FiberDiameter/commit/964f8e394989b143f7f2a709f2afb85dc4374dc0))
