@@ -11,32 +11,31 @@ const Home: NextPage = () => {
         <title>FiberDiameter</title>
         <meta
           name='description'
-          content='Measure the diameter of really tiny fibers'
+          content='Measure the diameter of really tiny fibers assisted by deep learning models'
         />
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
       <main className={styles.main}>
+      <img src="images/logo.png/" width="10%" />
         <h1 className={styles.title}>
           Welcome to <p className='text-blue-500'>FiberDiameter!</p>
         </h1>
+        <h2>A deep learning-assisted app to measure your fibers</h2>
         <Link href='/app'>
-          <button className='p-2 m-4 rounded-md hover:bg-slate-900'>
-            Measure my fiber 🤙
+          <button className='p-2 m-4 rounded-md bg-blue-900 hover:bg-slate-900'>
+            Start measuring 🪄
           </button>
         </Link>
       </main>
 
       <footer className={styles.footer}>
         <a
-          href='https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
+          href='https://github.com/fcossio/FiberDiameter'
           target='_blank'
           rel='noopener noreferrer'
         >
-          Powered by{" "}
-          <span className={styles.logo}>
-            <Image src='/vercel.svg' alt='Vercel Logo' width={72} height={16} />
-          </span>
+          Made with 💙 by｛ FernandoCossio, YaelSuarez, LuisCossio, AleDeLuna ｝
         </a>
       </footer>
     </div>
