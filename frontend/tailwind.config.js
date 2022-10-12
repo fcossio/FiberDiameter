@@ -5,7 +5,11 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      cursor: {
+        wand: "url(/wand.cur), pointer",
+      },
+    },
   },
   plugins: [require("daisyui")],
 };
