@@ -12,8 +12,3 @@ export interface Line {
   endX: number;
   endY: number;
 }
-
-export interface Dims {
-    width: number,
-    height: number,
-}

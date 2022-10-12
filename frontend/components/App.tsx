@@ -6,10 +6,11 @@ import {
   SetStateAction,
   useState,
 } from "react";
-import { Dims, Fiber } from "../types";
+import { Fiber, Line } from "../types";
 import Editor from "./Editor";
 import SidePanel from "./SidePanel";
 import SystemMenu from "./SystemMenu";
+import { randomColor } from 'randomcolor';
 
 interface State {
   isValidScale: boolean;
@@ -31,6 +32,7 @@ interface AppContextType {
   setFibers: Dispatch<SetStateAction<Fiber[]>>;
   appState: State;
   setAppState: Dispatch<SetStateAction<State>>;
+  addFiber: (measurements: Line[]) => void;
 }
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -59,6 +61,17 @@ const App = () => {
     }
   };
 
+  const addFiber = (measurements: Line[]) => {
+     setFibers((prevFibers) => {
+       const id = Math.max(0, ...fibers.map((fiber) => fiber.id)) + 1;
+       prevFibers.push({
+         id,
+         color: randomColor(),
+         measurements,
+       });
+       return [...prevFibers];
+     });
+  }
   return (
     <div className='container'>
       <AppContext.Provider
@@ -71,6 +84,7 @@ const App = () => {
           },
           fibers,
           setFibers,
+          addFiber,
           appState: state,
           setAppState: setState,
         }}

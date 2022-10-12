@@ -25,6 +25,7 @@ const MeasuredImage = (props: Props) => {
   const {
     fibers,
     setFibers,
+    addFiber,
     appState: { realDims, magnitude, scaleLength, isChoosingTarget, imagePath },
     setAppState,
   } = useContext(AppContext)!;
@@ -132,19 +133,12 @@ const MeasuredImage = (props: Props) => {
               const y = (event.clientY - rect.top) / imageDims.height;
               console.log(x, y);
 
+              console.time('inference')
               const res = await runAsync(imagePath, [x, y]);
-              console.log(res);
               const inferredFiber = JSON.parse(res.fiber);
-              console.log(inferredFiber);
-              setFibers((prevFibers) => {
-                const id = Math.max(...fibers.map((fiber) => fiber.id)) + 1;
-                const measurements = inferredFiber.lines.map((line: any, id: number) => ({...line, id, type: "line"}))
-                return [...prevFibers, {
-                  id,
-                  color: randomColor(),
-                  measurements,
-                }]
-              })
+              const measurements = inferredFiber.lines.map((line: any, id: number) => ({...line, id, type: "line"}))
+              addFiber(measurements);
+              console.timeEnd('inference')
             }}
           />
         </>
