@@ -20,30 +20,11 @@ const SidePanel = (props: Props) => {
     appState: { scaleLength, imagePath },
     fibers,
     setFibers,
+    addFiber,
     setAppState,
   } = useContext(AppContext)!;
   
   const [thunder, setThunder] = useState(<AiOutlineThunderbolt />);
-  const addFiber = () => {
-    let newFibers = [...fibers];
-    const newId = Math.max(...fibers.map((fiber) => fiber.id)) + 1;
-
-    newFibers.push({
-      id: newId,
-      color: randomColor(),
-      measurements: [
-        {
-          id: 0,
-          type: "line",
-          startX: 0.11,
-          startY: 0.21,
-          endX: 0.31,
-          endY: 0.41,
-        },
-      ],
-    });
-    setFibers(newFibers);
-  };
 
   const chooseTarget = () => {
     setAppState(prevAppState => ({ ...prevAppState, isChoosingTarget: !prevAppState.isChoosingTarget }))
@@ -76,7 +57,18 @@ const SidePanel = (props: Props) => {
             </button>
             <button
               className='btn btn-xs btn-square btn-ghost'
-              onClick={addFiber}
+              onClick={() =>
+                addFiber([
+                  {
+                    id: 0,
+                    type: "line",
+                    startX: 0.11,
+                    startY: 0.21,
+                    endX: 0.31,
+                    endY: 0.41,
+                  },
+                ])
+              }
             >
               <AiOutlinePlus />
             </button>

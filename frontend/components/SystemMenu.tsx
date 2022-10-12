@@ -13,7 +13,7 @@ const SystemMenu = (props: React.ComponentPropsWithoutRef<"div">) => {
         <Item>as JSON</Item>
       </Tab>
       <Tab title='Edit'>
-        <Item>Add Segment</Item>
+        {/* <Item>Add Segment</Item> */}
         <Item>Add Fiber</Item>
         <Item>Set Scale</Item>
       </Tab>
