@@ -21,11 +21,14 @@ const SidePanel = (props: Props) => {
   } = useContext(AppContext)!;
 
   const chooseTarget = () => {
+    setShowIntro(false);
     setAppState((prevAppState) => ({
       ...prevAppState,
       isChoosingTarget: !prevAppState.isChoosingTarget,
     }));
   };
+
+  const [ showIntro, setShowIntro ] = useState(true)
 
   return (
     <div
@@ -38,6 +41,7 @@ const SidePanel = (props: Props) => {
         title='Fibers'
         actions={
           <div>
+            {showIntro? <a className="primary">Click this button ☞</a>:<></>}
             <button
               className='btn btn-xs btn-primary btn-square'
               title='Infer fiber'
