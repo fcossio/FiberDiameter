@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.7.1 (2022-10-13)
+### Fix
+* **UI:** Bugs on image switching ([#35](https://github.com/fcossio/FiberDiameter/issues/35)) ([`3acc3e5`](https://github.com/fcossio/FiberDiameter/commit/3acc3e56594bde0d683b65d5394dfa46f344bee0))
+
 ## v0.7.0 (2022-10-13)
 ### Feature
 * **UI:** Upload images ([#31](https://github.com/fcossio/FiberDiameter/issues/31)) ([`236a989`](https://github.com/fcossio/FiberDiameter/commit/236a9898d65ade69e7e6adfc66ed9c03407f2bcd))
