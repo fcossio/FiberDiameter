@@ -117,7 +117,7 @@ const MeasuredImage = (props: Props) => {
 
     // add inference mark
     const id = Math.max(0, ...pendingInferences.map((req) => req.id)) + 1;
-    console.log("new inference request, id: " + id);
+    console.log("MeasuredImage.tsx: new inference request, id: " + id);
     setAppState((prevState) => {
       prevState.pendingInferences.push({ x, y, color, id });
       return {
@@ -127,9 +127,9 @@ const MeasuredImage = (props: Props) => {
     });
 
     try {
-      console.time("inference");
+      console.time("MeasuredImage.tsx: inference");
       const res = await runAsync(imagePath, [x, y]);
-      console.log(res);
+      console.log("MeasuredImage.tsx:" + res.toString());
       const inferredFiber = JSON.parse(res.fiber);
       if (inferredFiber.lines.length === 0) throw new Error("No fiber found there");
       const measurements = inferredFiber.lines.map((line: any, id: number) => ({
