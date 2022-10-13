@@ -2,6 +2,9 @@
 
 <!--next-version-placeholder-->
 
+## v0.7.2 (2022-10-13)
+
+
 ## v0.7.1 (2022-10-13)
 ### Fix
 * **UI:** Bugs on image switching ([#35](https://github.com/fcossio/FiberDiameter/issues/35)) ([`3acc3e5`](https://github.com/fcossio/FiberDiameter/commit/3acc3e56594bde0d683b65d5394dfa46f344bee0))
