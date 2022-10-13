@@ -1,21 +1,30 @@
-import React from "react";
+import React, { useContext } from "react";
+import { AppContext } from './App';
 
 const SystemMenu = (props: React.ComponentPropsWithoutRef<"div">) => {
+  const { swapImage } = useContext(AppContext)!;
+  
   return (
     <div className='flex p-1 text-sm group bg-slate-700'>
       <Tab title='File'>
-        <Item>New</Item>
-        <Item>Open</Item>
+        <Item htmlFor="select-file">New</Item>
+        <input
+          id='select-file'
+          type='file'
+          className='hidden'
+          onChange={swapImage}
+        />
+        {/* <Item>Open</Item> */}
       </Tab>
       <Tab title='Download'>
-        <Item>annotated Image</Item>
+        {/* <Item>annotated Image</Item>
         <Item>as CSV</Item>
-        <Item>as JSON</Item>
+        <Item>as JSON</Item> */}
       </Tab>
       <Tab title='Edit'>
         {/* <Item>Add Segment</Item> */}
-        <Item>Add Fiber</Item>
-        <Item>Set Scale</Item>
+        {/* <Item>Add Fiber</Item> */}
+        {/* <Item>Set Scale</Item> */}
       </Tab>
     </div>
   );
@@ -34,8 +43,10 @@ const Tab = (props: React.ComponentPropsWithoutRef<"div">) => {
   );
 };
 
-const Item = (props: React.ComponentPropsWithoutRef<"div">) => {
-  return <div className='px-1 m-1 rounded-sm hover:bg-slate-600'>{props.children}</div>;
+const Item = (props: React.ComponentPropsWithoutRef<"label">) => {
+  return <div className='px-1 m-1 rounded-sm hover:bg-slate-600' >
+    <label {...props}>{props.children}</label>
+    </div>
 };
 
 export default SystemMenu;

@@ -9,7 +9,8 @@ import { Fiber, Line } from "../types";
 import Editor from "./Editor";
 import SidePanel from "./SidePanel";
 import SystemMenu from "./SystemMenu";
-import { Props as PendingInferenceProps } from "./InferencePointer"
+import { Props as PendingInferenceProps } from "./InferencePointer";
+import { ToastContainer, toast } from "react-toastify";
 
 interface State {
   isValidScale: boolean;
@@ -30,9 +31,10 @@ interface State {
 interface AppContextType {
   fibers: Fiber[];
   setFibers: Dispatch<SetStateAction<Fiber[]>>;
+  addFiber: (measurements: Line[], color: string) => void;
+  swapImage: (event: ChangeEvent<HTMLInputElement>) => void;
   appState: State;
   setAppState: Dispatch<SetStateAction<State>>;
-  addFiber: (measurements: Line[], color: string) => void;
 }
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -49,7 +51,7 @@ const App = () => {
     realDims: { width: 0, height: 0 },
     htmlImageDims: { width: 0, height: 0, x: 0, y: 0 },
     isChoosingTarget: false,
-    imagePath: "/images/fibers.png",
+    imagePath: '',
     pendingInferences: [] as PendingInferenceProps[],
   });
 
@@ -74,13 +76,34 @@ const App = () => {
       return [...prevFibers];
     });
   };
+
+  const swapImage = (event: ChangeEvent<HTMLInputElement>) => {
+    if (!(event.target.files && event.target.files[0])) {
+      toast.error("no file selected");
+      return;
+    }
+
+    const file = event.target.files[0];
+    if (file.type !== "image/png" && file.type !== "image/jpeg") {
+      toast.error("This only accepts PNG or JPG images");
+      return;
+    }
+
+    const imagePath = URL.createObjectURL(file);
+    setState((prevState) => ({
+      ...prevState,
+      imagePath,
+    }));
+  };
+  
   return (
-    <div className='container'>
+    <div className='h-screen py-6 bg-black'>
       <AppContext.Provider
         value={{
           fibers,
           setFibers,
           addFiber,
+          swapImage,
           appState: state,
           setAppState: setState,
         }}
