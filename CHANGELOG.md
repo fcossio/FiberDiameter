@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.7.0 (2022-10-13)
+### Feature
+* **UI:** Upload images ([#31](https://github.com/fcossio/FiberDiameter/issues/31)) ([`236a989`](https://github.com/fcossio/FiberDiameter/commit/236a9898d65ade69e7e6adfc66ed9c03407f2bcd))
+
 ## v0.6.1 (2022-10-12)
 
 
