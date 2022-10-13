@@ -1,4 +1,10 @@
-import { memo, useContext, useEffect, useState } from "react";
+import {
+  memo,
+  MouseEventHandler,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 import { calculateArea, calculateDistance } from "@coszio/react-measurements";
 import { calculateRealImageSize, getObjectFitSize } from "../utils";
@@ -8,6 +14,7 @@ import ScaleLayer from "./ScaleLayer";
 import { runAsync } from "../worker/py-worker";
 import { randomColor } from "randomcolor";
 import InferencePointer from "./InferencePointer";
+import { toast } from "react-toastify";
 
 const initialScale = () => {
   return {
@@ -90,6 +97,58 @@ const MeasuredImage = (props: Props) => {
     }));
   }, [scaleMeasurement, htmlImageDims, scaleLength, setAppState]);
 
+  const inferFiber: MouseEventHandler = async (event) => {
+    setAppState((prevState) => ({
+      ...prevState,
+      isChoosingTarget: false,
+    }));
+
+    const rect = event.currentTarget.getBoundingClientRect();
+
+    const x = (event.clientX - rect.left) / htmlImageDims.width;
+    const y = (event.clientY - rect.top) / htmlImageDims.height;
+    const color = randomColor();
+    console.log(x, y);
+
+    // add inference mark
+    const id = Math.max(0, ...pendingInferences.map((req) => req.id)) + 1;
+    console.log("new inference request, id: " + id);
+    setAppState((prevState) => {
+      prevState.pendingInferences.push({ x, y, color, id });
+      return {
+        ...prevState,
+        pendingInferences: [...prevState.pendingInferences],
+      };
+    });
+
+    try {
+      console.time("inference");
+      const res = await runAsync(imagePath, [x, y]);
+      console.log(res);
+      const inferredFiber = JSON.parse(res.fiber);
+      const measurements = inferredFiber.lines.map((line: any, id: number) => ({
+        ...line,
+        id,
+        type: "line",
+      }));
+      addFiber(measurements, color);
+    } catch (error: any) {
+      toast.error(error.toString());
+    }
+    // remove inference mark
+    setAppState((prevState) => {
+      const popIndex = prevState.pendingInferences.findIndex(
+        (req) => req.id == id
+      );
+      prevState.pendingInferences.splice(popIndex, 1);
+      return {
+        ...prevState,
+        pendingInferences: [...prevState.pendingInferences],
+      };
+    });
+    console.timeEnd("inference");
+  };
+
   return (
     <div className='relative'>
       <picture>
@@ -123,12 +182,7 @@ const MeasuredImage = (props: Props) => {
             measureCircle={measureCircle}
           />
           {pendingInferences.map((props, key) => {
-            return (
-              <InferencePointer
-                key={key}
-                {...props}
-              />
-            );
+            return <InferencePointer key={key} {...props} />;
           })}
           <div
             className={`absolute object-contain opacity-10 ${
@@ -142,48 +196,7 @@ const MeasuredImage = (props: Props) => {
               width: htmlImageDims.width,
               height: htmlImageDims.height,
             }}
-            onClick={async (event) => {
-              setAppState((prevState) => ({
-                ...prevState,
-                isChoosingTarget: false,
-              }));
-              
-              const rect = event.currentTarget.getBoundingClientRect();
-              
-              const x = (event.clientX - rect.left) / htmlImageDims.width;
-              const y = (event.clientY - rect.top) / htmlImageDims.height;
-              const color = randomColor();
-              console.log(x, y);
-              
-              // add inference mark
-              const id = Math.max(0, ...pendingInferences.map((req) => req.id)) + 1;
-              console.log("new inference request, id: " + id);
-              setAppState((prevState) => {
-                prevState.pendingInferences.push({ x, y, color, id });
-                return {
-                ...prevState,
-                pendingInferences: [...prevState.pendingInferences]
-              }});
-
-              console.time("inference");
-              const res = await runAsync(imagePath, [x, y]);
-              console.log(res);
-              const inferredFiber = JSON.parse(res.fiber);
-              const measurements = inferredFiber.lines.map(
-                (line: any, id: number) => ({ ...line, id, type: "line" })
-              );
-              addFiber(measurements, color);
-              
-              // remove inference mark
-              setAppState((prevState) => {
-                const popIndex = prevState.pendingInferences.findIndex(req => req.id == id);
-                prevState.pendingInferences.splice(popIndex, 1);
-                return {
-                ...prevState,
-                pendingInferences: [...prevState.pendingInferences]
-              }});
-              console.timeEnd("inference");
-            }}
+            onClick={inferFiber}
           />
         </>
       )}

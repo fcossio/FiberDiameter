@@ -4,7 +4,7 @@ const App = dynamic(import('../components/App'), { ssr: false });
 
 const AppPage = () => {
   return (
-    <div className='container w-4/5 p-4 mx-auto'>
+    <div className='h-screen mx-auto bg-black lg:w-4/5 '>
       <App />
     </div>
   );
