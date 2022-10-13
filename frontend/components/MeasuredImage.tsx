@@ -1,8 +1,10 @@
 import {
   memo,
   MouseEventHandler,
+  useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 
@@ -46,13 +48,10 @@ const MeasuredImage = (props: Props) => {
     setAppState,
   } = useContext(AppContext)!;
 
-  const [state, setState] = useState({
-    loaded: false,
-  });
-  const [scaleMeasurement, setScaleMeasurement] = useState(initialScale());
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  const [image, setImage] = useState(new Image());
-
+  const [scaleMeasurement, setScaleMeasurement] = useState(initialScale());let image = useRef(new Image());
+  
   const onLayerChange = (fiberKey: number, measurements: any) => {
     setFibers((prevFibers) => {
       prevFibers[fiberKey].measurements = measurements;
@@ -70,19 +69,25 @@ const MeasuredImage = (props: Props) => {
       10 +
     ` ${magnitude}²`;
 
-  const onImageLoaded = () => setState({ ...state, loaded: true });
-
+    useEffect(() => {
+      setIsLoaded(false);
+    }, [imagePath])
+    
+  const onImageLoaded = () => setIsLoaded(true);
+  
   // update size of measurement layers
+  const onImageBoundsChanged = useCallback(() =>
+    setAppState((prevAppState) => ({
+      ...prevAppState,
+      htmlImageDims: getObjectFitSize(true, image.current),
+    })), [setAppState]);
+  
+  window.addEventListener("resize", onImageBoundsChanged);
+  
+  // change dimensions on every image change
   useEffect(() => {
-    const onImageBoundsChanged = () =>
-      setAppState((prevAppState) => ({
-        ...prevAppState,
-        htmlImageDims: getObjectFitSize(true, image),
-      }));
-
-    window.addEventListener("resize", onImageBoundsChanged);
     onImageBoundsChanged();
-  }, [image, state.loaded]);
+  }, [ isLoaded, onImageBoundsChanged]);
 
   // update real scale of the image
   useEffect(() => {
@@ -126,6 +131,7 @@ const MeasuredImage = (props: Props) => {
       const res = await runAsync(imagePath, [x, y]);
       console.log(res);
       const inferredFiber = JSON.parse(res.fiber);
+      if (inferredFiber.lines.length === 0) throw new Error("No fiber found there");
       const measurements = inferredFiber.lines.map((line: any, id: number) => ({
         ...line,
         id,
@@ -133,7 +139,7 @@ const MeasuredImage = (props: Props) => {
       }));
       addFiber(measurements, color);
     } catch (error: any) {
-      toast.error(error.toString());
+      toast.warn(error.message.toString());
     }
     // remove inference mark
     setAppState((prevState) => {
@@ -156,16 +162,16 @@ const MeasuredImage = (props: Props) => {
         <img
           src={imagePath}
           alt='fibers image'
-          ref={(e) => setImage(e!)}
+          ref={(e) => image.current = e!}
           onLoad={onImageLoaded}
           className='object-contain w-full h-[90vh] pointer-events-none'
         />
       </picture>
-      {state.loaded && (
+      {isLoaded && (
         <>
           {fibers.map((fiber, key) => (
             <FiberLayer
-              key={key}
+              key={fiber.id}
               fiberId={fiber.id}
               measurements={fiber.measurements}
               color={fiber.color}

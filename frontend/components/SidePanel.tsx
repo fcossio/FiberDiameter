@@ -13,7 +13,7 @@ interface Props {
 }
 const SidePanel = (props: Props) => {
   const {
-    appState: { scaleLength, isChoosingTarget },
+    appState: { scaleLength, isChoosingTarget, imagePath },
     fibers,
     setFibers,
     addFiber,
@@ -39,7 +39,7 @@ const SidePanel = (props: Props) => {
         className='overflow-auto'
         id='fibers'
         title='Fibers'
-        actions={
+        actions={ imagePath !== '' && 
           <div>
             {showIntro? <a className="primary">Click this button ☞</a>:<></>}
             <button
