@@ -79,7 +79,9 @@ class LineFit:
             p1 = [x_fit[0], y_fit[0]]
             p2 = [x_fit[-1], y_fit[-1]]
         else:
-            print("One of the pcov values is True and the rest are False")
+            print(
+                "Read image of sizeOne of the pcov values is True and the rest are False"
+            )
         return popt_fit, x_fit, y_fit, p1, p2
 
     def get_point(self, t, p1, p2):
@@ -128,7 +130,7 @@ class LineFit:
             if not self.is_inside(im, test_point):
                 continue
             true_point = im[test_point[0], test_point[1]] > color_threshold
-            print(true_point.shape)
+            print("Python", true_point.shape)
             if not true_point:
                 continue
             if true_point:
@@ -162,13 +164,19 @@ line_fit = LineFit(30, 0.3)
 
 async def get_image(url):
     "Load image from a url and return the it with a shape of [h, w, 1]"
-    print(f"loading image from {url}")
+    print(f"Python: Loading image from {url}")
     response = await pyfetch(url, method="GET", cors="no-cors")
     ans = await response.bytes()
     ans = iio.imread(io.BytesIO(ans))
     im = Image.fromarray(ans).convert("L")
     im = im.resize((256, 256))
-    print("Read image of size", im.size, "with values between", np.min(im), np.max(im))
+    print(
+        "Python: Read image of size",
+        im.size,
+        "with values between",
+        np.min(im),
+        np.max(im),
+    )
     return np.array(im).astype(np.float32) / 255
 
 
@@ -188,37 +196,38 @@ def convert_to_react_measurements_format(diameter, lines):
     return json.dumps(dict(lines=ans))
 
 
-async def get_lines(img, selection_point: Tuple[float, float], inference_js_func=None):
+async def inference_pyfunc(img, coord: Tuple[float, float], inference_jsfunc=None):
     """Load the image and use the js inference function to obtain the segmentation.
 
     :param img: the image to be processed. the output of get_image.
     :param selection_point: the coordinates (x, y) where the pixel should be selected.
     :param inference_js_func: the handle for the js function that runs inference.
     """
-    print(f"Entered get_lines correctly with {img.shape} {selection_point}")
+    print(
+        f"Python: start inference_pyfunc(img{img.size}, coord{coord}, inference_jsfunc"
+    )
     selection = np.zeros_like(img)
-    x, y = selection_point
+    x, y = coord
     x = int(256 * x)
     y = int(256 * y)
-    print(
-        f"Selected coords in python are {selection_point} that get converted to {x}, {y}"
-    )
     selection[y, x] = 1.0
     seg_input = np.stack([img, selection], axis=-1)
     seg_input = seg_input[np.newaxis, :, :, :]
-    print("line 207")
     # The ort Tensor requires a flat list and the dimentions
     arr_dim = to_js([int(x) for x in seg_input.shape])
     flat_img_array = to_js(seg_input.flatten().tolist())
-    print("line 211")
-    # Run the model in WASM with our js func
-    data, dims = await inference_js_func(flat_img_array, arr_dim)
-    print("line 214")
+    print(
+        f"Python: calling inference_jsfunc(flat_img({len(flat_img_array)},\
+dims{arr_dim})"
+    )
+    data, dims = await inference_jsfunc(flat_img_array, arr_dim)
     ans = np.asarray(data.to_py()).reshape(dims.to_py())[0, :, :, 0]
-    print(ans)
+    print(f"Python: obtained ans{ans.shape}")
     # The array is ready to fit the lines
     measurements = line_fit.predict(ans > 0.5)
+    print(f"Python: created {len(measurements[1])} measurements")
     return convert_to_react_measurements_format(*measurements)
 
 
-{"get_image": get_image, "get_lines": get_lines}
+# this is returned when the script is run by pyodide
+{"get_image": get_image, "inference_pyfunc": inference_pyfunc}
