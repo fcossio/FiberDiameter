@@ -1,8 +1,8 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import Link from 'next/link';
-import styles from '../styles/Home.module.css'
+import type { NextPage } from "next";
+import Head from "next/head";
+import Image from "next/image";
+import Link from "next/link";
+import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
   return (
@@ -17,13 +17,13 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-      <img src="images/logo.png/" width="10%" />
+        <Image src='images/logo.png/' alt='FiberDiameter logo' width='10%' />
         <h1 className={styles.title}>
           Welcome to <p className='text-blue-500'>FiberDiameter!</p>
         </h1>
         <h2>A deep learning-assisted app to measure your fibers</h2>
         <Link href='/app'>
-          <button className='p-2 m-4 rounded-md bg-blue-900 hover:bg-slate-900'>
+          <button className='p-2 m-4 bg-blue-900 rounded-md hover:bg-slate-900'>
             Start measuring 🪄
           </button>
         </Link>
@@ -40,6 +40,6 @@ const Home: NextPage = () => {
       </footer>
     </div>
   );
-}
+};
 
-export default Home
+export default Home;

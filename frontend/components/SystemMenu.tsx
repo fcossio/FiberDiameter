@@ -1,13 +1,13 @@
 import React, { useContext } from "react";
-import { AppContext } from './App';
+import { AppContext } from "./App";
 
 const SystemMenu = (props: React.ComponentPropsWithoutRef<"div">) => {
   const { swapImage } = useContext(AppContext)!;
-  
+
   return (
-    <div className='flex p-1 text-sm group bg-slate-700'>
+    <div className='flex p-1 text-sm select-none group bg-slate-700'>
       <Tab title='File'>
-        <Item htmlFor="select-file">New</Item>
+        <Item htmlFor='select-file'>New</Item>
         <input
           id='select-file'
           type='file'
@@ -44,9 +44,13 @@ const Tab = (props: React.ComponentPropsWithoutRef<"div">) => {
 };
 
 const Item = (props: React.ComponentPropsWithoutRef<"label">) => {
-  return <div className='px-1 m-1 rounded-sm hover:bg-slate-600' >
-    <label {...props}>{props.children}</label>
+  return (
+    <div className='flex px-1 m-1 rounded-sm hover:bg-slate-600'>
+      <label className='w-full cursor-pointer' {...props}>
+        {props.children}
+      </label>
     </div>
+  );
 };
 
 export default SystemMenu;

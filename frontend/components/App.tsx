@@ -10,7 +10,7 @@ import Editor from "./Editor";
 import SidePanel from "./SidePanel";
 import SystemMenu from "./SystemMenu";
 import { Props as PendingInferenceProps } from "./InferencePointer";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 interface State {
   isValidScale: boolean;
@@ -66,8 +66,10 @@ const App = () => {
   };
 
   const addFiber = (measurements: Line[], color: string) => {
+    console.log("add fiber")
     setFibers((prevFibers) => {
-      const id = Math.max(0, ...fibers.map((fiber) => fiber.id)) + 1;
+      const id = Math.max(0, ...prevFibers.map((fiber) => fiber.id)) + 1;
+      console.log("push fiber")
       prevFibers.push({
         id,
         color,
@@ -90,6 +92,8 @@ const App = () => {
     }
 
     const imagePath = URL.createObjectURL(file);
+    
+    setFibers([]);
     setState((prevState) => ({
       ...prevState,
       imagePath,
