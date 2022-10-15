@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.8.0 (2022-10-15)
+### Feature
+* **UI:** Favico is now the logo ([#38](https://github.com/fcossio/FiberDiameter/issues/38)) ([`92776d3`](https://github.com/fcossio/FiberDiameter/commit/92776d38d266ea2e791ee6352def020af269e0f1))
+
 ## v0.7.2 (2022-10-13)
 
 
