@@ -13,7 +13,7 @@ const Home: NextPage = () => {
           name='description'
           content='Measure the diameter of really tiny fibers assisted by deep learning models'
         />
-        <link rel='icon' href='/favicon.ico' />
+        <link rel='icon' href='/images/logo.ico' />
       </Head>
 
       <main className='flex flex-col items-center justify-center min-h-screen gap-4 p-16'>
@@ -32,11 +32,11 @@ const Home: NextPage = () => {
         </h1>
         <h2>
           A deep learning-assisted app to{" "}
-          <span className='underline decoration-2 decoration-pink-500'>
+          <span className='underline decoration-2 decoration-white-500'>
             measure
           </span>{" "}
           your{" "}
-          <span className='underline decoration-2 decoration-pink-500'>
+          <span className='underline decoration-2 decoration-white-500'>
             fibers
           </span>
         </h2>
