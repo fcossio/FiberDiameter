@@ -28,3 +28,8 @@ a {
     background: black;
   }
 }
+
+.h2-center {
+  text-align: center;
+  line-height: 200%;
+}

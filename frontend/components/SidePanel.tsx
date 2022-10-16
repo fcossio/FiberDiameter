@@ -39,11 +39,11 @@ const SidePanel = (props: Props) => {
         className='overflow-auto'
         id='fibers'
         title='Fibers'
-        actions={ imagePath !== '' && 
+        actions={ imagePath !== '' &&
           <div>
-            {showIntro? <a className="primary">Click this button ☞</a>:<></>}
+            {showIntro? <a className="primary">Click there ☞</a>:<></>}
             <button
-              className='btn btn-xs btn-primary btn-square'
+              className='btn btn-xs btn-square btn-ghost'
               title='Infer fiber'
               onClick={chooseTarget}
             >
