@@ -32,7 +32,7 @@ const Home: NextPage = () => {
           </p>
         </h1>
         <h2 className="h2-center">
-          Measure the diameter of fibers in microscopy images<br/>
+          Measure the diameter of fibers in electron microscopy images<br/>
           Assisted by deep learning models<br/>
           Directly in your browser
         </h2>
@@ -49,9 +49,9 @@ const Home: NextPage = () => {
           then select the fiber that you want to measure.
           The deep learning models are run directly in the browser. This means that your
           images never leave your computer and your intellectual property is preserved.
-          In the world of machine learning more data translates to better performance of
+          In the world of machine learning, more data translates to better performance of
           the models. If you would like to donate images for training models, please get
-          in touch with YaelSuarez. This will help us ship better models for everyone.
+          in touch with <a href="mailto:yael.suarez@farmaci.uu.se">YaelSuarez</a>. This will help us ship better models for everyone.
         </p>
       </main>
 

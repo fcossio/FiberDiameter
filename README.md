@@ -12,8 +12,7 @@ The app is openly available at [FiberDiameter.com](https://www.fiberdiameter.com
 You can start by playing with the test image. First select the wand tool and then select the fiber that you want to measure.
 
 The deep learning models are run directly in the browser. This means that your images never leave your computer and your intellectual property is preserved.
-
-In the world of machine learning more data translates to better performance of the models. If you would like to donate images for training models, please get in touch with YaelSuarez. This will make the models better for you and for everyone.
+In the world of machine learning more data translates to better performance of the models. If you would like to donate images for training models, please get in touch with [YaelSuarez](mailto:yael.suarez@farmaci.uu.se). This will make the models better for you and for everyone.
 
 ### Locally
 
