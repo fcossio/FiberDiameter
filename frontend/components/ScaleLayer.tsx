@@ -19,6 +19,7 @@ const ScaleLayer = (props: Props) => {
       measureLine={props.measureLine}
       measureCircle={props.measureCircle}
       disableRemoveButton
+      textColor="yellow"
     />
   );
 };

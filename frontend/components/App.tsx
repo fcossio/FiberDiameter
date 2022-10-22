@@ -74,6 +74,7 @@ const App = () => {
         id,
         color,
         measurements,
+        average: 0 // useEffect on FiberItem will take care of this
       });
       return [...prevFibers];
     });
