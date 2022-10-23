@@ -1,0 +1,39 @@
+#################################################
+########## UNet training configuration ##########
+#################################################
+
+#------------------ General --------------------#
+
+seed: 0
+model_path: "seg_model.onnx"
+
+#------------------- Model ---------------------#
+
+num_classes: 1
+in_channels: 2
+start_filts: 64
+depth: 4
+merge_mode: "concat"
+up_mode: "transpose"
+
+#################################################
+################### Training ####################
+#################################################
+
+#------------------- Trainer -------------------#
+
+max_epochs: 2
+batch_size: 8
+learning_rate: 0.0001
+loss: "MeanSquaredError"
+optimizer: "Adam"
+limit_train_batches: 0.1
+limit_val_batches: 0.1
+
+#----------------- DataModules -----------------#
+
+data_path: "artifacts/rendered-fibers-medium:v0"
+shuffle: True
+train_images: 2047
+test_images: 255
+val_images: 255
