@@ -61,8 +61,9 @@ class FiberDataset(torch.utils.data.Dataset):
         return self.num_images
 
     def __getitem__(self, idx):
-        
-        if idx >= len(self): raise IndexError
+
+        if idx >= len(self):
+            raise IndexError
 
         task_id = self.stage + str(idx).zfill(4)
 
@@ -92,7 +93,7 @@ class FiberDataModule(pl.LightningDataModule):
         self.val_images = val_images
         self.test_images = test_images
 
-    def setup(self, stage: str):
+    def setup(self, stage: str = None):
 
         if stage == "fit" or stage is None:
             self.fiber_train = FiberDataset(
@@ -106,7 +107,7 @@ class FiberDataModule(pl.LightningDataModule):
                 self.val_images,
             )
 
-        else:
+        if stage == "test" or stage is None:
             self.fiber_test = FiberDataset(
                 "test",
                 self.data_path,
