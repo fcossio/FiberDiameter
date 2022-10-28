@@ -1,6 +1,6 @@
 importScripts("https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js");
 importScripts(
-  "https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.wasm.min.js"
+  "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.12.1/dist/ort.wasm.min.js"
 ); // TODO: why do I have to manually put the wasm files in the public dir? shouldn't this take care of it?
 //the wasm files need to be copied from node_modules/onnxruntime-web/dist/*.wasm to /public
 
