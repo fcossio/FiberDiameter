@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.9.1 (2022-10-28)
+### Fix
+* **Frontend inference:** Fix onnxruntme cdn ([#47](https://github.com/fcossio/FiberDiameter/issues/47)) ([`930bc4c`](https://github.com/fcossio/FiberDiameter/commit/930bc4c793e743d79b4f5902a04940c96fd74521))
+
 ## v0.9.0 (2022-10-22)
 ### Feature
 * **UI:** Add global diameter ([#45](https://github.com/fcossio/FiberDiameter/issues/45)) ([`ac1054b`](https://github.com/fcossio/FiberDiameter/commit/ac1054b74b2c031c032db71c186d7720ade85ba1))
