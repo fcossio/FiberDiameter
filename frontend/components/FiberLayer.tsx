@@ -12,6 +12,7 @@ interface Props {
   measureLine: (line: any) => string;
   measureCircle: (circle: any) => string;
   disableRemoveButton?: boolean;
+  textColor?: string;
 }
 
 const FiberLayer = (props: Props) => {
@@ -43,13 +44,23 @@ const FiberLayer = (props: Props) => {
 
           :global(#layer${props.fiberId}
               .line-measurement
-              .line, .circle-measurement .circle, .text-annotation
-              .arrow-line) {
+              .line, #layer${props.fiberId}
+              .circle-measurement
+              .circle, #layer${props.fiberId} .text-annotation .arrow-line) {
             stroke: ${props.color};
           }
 
           :global(#layer${props.fiberId} .text-annotation .arrow-head) {
             fill: ${props.color};
+          }
+
+          /* ---- text ---- */
+          :global(#layer${props.fiberId}
+              .measurement-text, #layer${props.fiberId}
+              .text-annotation
+              .text) {
+            color: ${props.textColor ?? "#EEE8AAA0"};
+            background-color: rgba(0, 0, 0, 0.5);
           }
 
           /* ---- disable button bar ---- */
@@ -58,8 +69,7 @@ const FiberLayer = (props: Props) => {
           }
 
           /* ---- disable remove button ---- */
-          :global(
-              #layer${props.fiberId} .delete-button ) {
+          :global(#layer${props.fiberId} .delete-button) {
             ${props.disableRemoveButton && "visibility: hidden"}
           }
         `}

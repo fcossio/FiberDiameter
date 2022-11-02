@@ -1,6 +1,7 @@
 export interface Fiber {
   id: number;
   color: string;
+  average: number;
   measurements: Line[];
 }
 
