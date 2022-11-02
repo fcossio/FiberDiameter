@@ -2,6 +2,7 @@ import randomColor from "randomcolor";
 import { ChangeEvent, useContext, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { IoMdColorWand } from "react-icons/io";
+import { average } from "../utils";
 import { AppContext } from "./App";
 import FiberItem from "./FiberItem";
 import Item from "./Item";
@@ -13,7 +14,7 @@ interface Props {
 }
 const SidePanel = (props: Props) => {
   const {
-    appState: { scaleLength, isChoosingTarget, imagePath },
+    appState: { scaleLength, isChoosingTarget, imagePath, magnitude },
     fibers,
     setFibers,
     addFiber,
@@ -28,7 +29,10 @@ const SidePanel = (props: Props) => {
     }));
   };
 
-  const [ showIntro, setShowIntro ] = useState(true)
+  const [showIntro, setShowIntro] = useState(true);
+
+  const diameters = fibers.map((fiber) => fiber.average);
+  const globalAverage = Math.trunc(average(diameters) * 1000) / 1000 || 0;
 
   return (
     <div
@@ -39,40 +43,42 @@ const SidePanel = (props: Props) => {
         className='overflow-auto'
         id='fibers'
         title='Fibers'
-        actions={ imagePath !== '' &&
-          <div>
-            {showIntro? <a className="primary">Click there ☞</a>:<></>}
-            <button
-              className='btn btn-xs btn-square btn-ghost'
-              title='Infer fiber'
-              onClick={chooseTarget}
-            >
-              <IoMdColorWand
-                className={isChoosingTarget ? "animate-bounce" : ""}
-              />
-            </button>
-            <button
-              className='btn btn-xs btn-square btn-ghost'
-              title='New fiber'
-              onClick={() =>
-                addFiber(
-                  [
-                    {
-                      id: 0,
-                      type: "line",
-                      startX: 0.11,
-                      startY: 0.21,
-                      endX: 0.31,
-                      endY: 0.41,
-                    },
-                  ],
-                  randomColor()
-                )
-              }
-            >
-              <AiOutlinePlus />
-            </button>
-          </div>
+        actions={
+          imagePath !== "" && (
+            <div>
+              {showIntro ? <a className='primary'>Click there ☞</a> : <></>}
+              <button
+                className='btn btn-xs btn-square btn-ghost'
+                title='Infer fiber'
+                onClick={chooseTarget}
+              >
+                <IoMdColorWand
+                  className={isChoosingTarget ? "animate-bounce" : ""}
+                />
+              </button>
+              <button
+                className='btn btn-xs btn-square btn-ghost'
+                title='New fiber'
+                onClick={() =>
+                  addFiber(
+                    [
+                      {
+                        id: 0,
+                        type: "line",
+                        startX: 0.11,
+                        startY: 0.21,
+                        endX: 0.31,
+                        endY: 0.41,
+                      },
+                    ],
+                    randomColor()
+                  )
+                }
+              >
+                <AiOutlinePlus />
+              </button>
+            </div>
+          )
         }
       >
         {fibers.map((fiber, key) => {
@@ -108,9 +114,14 @@ const SidePanel = (props: Props) => {
         })}
       </Section>
       <Section className='min-h-max overflow-none' id='globals' title='Globals'>
-        <Item>
-          <p>Scale length: </p>
+        <GlobalItem>
+          <label htmlFor='global-average'>Average diameter:</label>
+          <p id='global-average'>{`${globalAverage} ${magnitude}`}</p>
+        </GlobalItem>
+        <GlobalItem>
+          <label htmlFor='scale-length'>Scale length: </label>
           <input
+            id='scale-length'
             type='number'
             className={
               "input input-xs input-ghost w-20 m-1 rounded-sm " +
@@ -120,6 +131,7 @@ const SidePanel = (props: Props) => {
             defaultValue={scaleLength}
           />
           <select
+            id='magnitude'
             className='w-16 m-1 rounded-sm select select-ghost select-xs'
             onChange={(event) =>
               setAppState((prevAppState) => ({
@@ -133,10 +145,14 @@ const SidePanel = (props: Props) => {
             <option value='µm'>µm</option>
             <option value='mm'>mm</option>
           </select>
-        </Item>
+        </GlobalItem>
       </Section>
     </div>
   );
+};
+
+const GlobalItem = (props: React.ComponentPropsWithoutRef<"div">) => {
+  return <Item className='h-7'>{props.children}</Item>;
 };
 
 export default SidePanel;

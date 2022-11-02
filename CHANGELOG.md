@@ -2,6 +2,18 @@
 
 <!--next-version-placeholder-->
 
+## v0.9.1 (2022-10-28)
+### Fix
+* **Frontend inference:** Fix onnxruntme cdn ([#47](https://github.com/fcossio/FiberDiameter/issues/47)) ([`930bc4c`](https://github.com/fcossio/FiberDiameter/commit/930bc4c793e743d79b4f5902a04940c96fd74521))
+
+## v0.9.0 (2022-10-22)
+### Feature
+* **UI:** Add global diameter ([#45](https://github.com/fcossio/FiberDiameter/issues/45)) ([`ac1054b`](https://github.com/fcossio/FiberDiameter/commit/ac1054b74b2c031c032db71c186d7720ade85ba1))
+
+## v0.8.1 (2022-10-16)
+### Documentation
+* **UI:** Added info to landing page ([#40](https://github.com/fcossio/FiberDiameter/issues/40)) ([`7dd13bf`](https://github.com/fcossio/FiberDiameter/commit/7dd13bfc34deb4785c654ae61078d1f9a3f76af7))
+
 ## v0.8.0 (2022-10-15)
 ### Feature
 * **UI:** Favico is now the logo ([#38](https://github.com/fcossio/FiberDiameter/issues/38)) ([`92776d3`](https://github.com/fcossio/FiberDiameter/commit/92776d38d266ea2e791ee6352def020af269e0f1))

@@ -1,5 +1,5 @@
 import { calculateDistance } from "@coszio/react-measurements";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { FaTimes } from "react-icons/fa";
 import { Fiber, Line } from "../types";
@@ -14,14 +14,24 @@ export interface Props {
 const FiberItem = (props: Props & Fiber) => {
   const {
     appState: { realDims },
+    setFibers
   } = useContext(AppContext)!;
 
-  const lengths = props.measurements.map((line: Line) =>
+  useEffect(() => {
+    const lengths = props.measurements.map((line: Line) =>
     calculateDistance(line, realDims.width, realDims.height)
-  );
-
-  const diameter = Math.trunc(average(lengths) * 1000) / 1000;
-
+    );
+    
+    const diameter = Math.trunc(average(lengths) * 1000) / 1000;
+    
+    setFibers(prevFibers => {
+      const idx = prevFibers.findIndex(fiber => fiber.id == props.id)
+      prevFibers[idx].average = diameter
+      return [...prevFibers]
+    })
+    
+  }, [props.measurements, realDims, props.id, setFibers])
+    
   return (
     <Item className='justify-between h-6 group'>
       <Item className='-ml-3'>
@@ -42,8 +52,8 @@ const FiberItem = (props: Props & Fiber) => {
           style={{
             backgroundColor: props.color,
           }}
-        ></span>
-        <p className=''>{diameter}</p>
+        />
+        <p className=''>{props.average}</p>
       </Item>
       <Item className='hidden group-hover:block'>
         <button
