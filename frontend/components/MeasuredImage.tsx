@@ -182,7 +182,7 @@ const MeasuredImage = (props: Props) => {
           ))}
           <ScaleLayer
             measurement={scaleMeasurement}
-            color={"#FAFAFA"}
+            color={"#f2f200"}
             onChange={(measurements) => setScaleMeasurement(measurements[0])}
             measureLine={(line) => "scale: " + measureLine(line)}
             measureCircle={measureCircle}

@@ -7,6 +7,7 @@ import { AppContext } from "./App";
 import FiberItem from "./FiberItem";
 import Item from "./Item";
 import Section from "./Section";
+import { VictoryHistogram, VictoryChart } from "victory";
 
 interface Props {
   isValidScale: boolean;
@@ -112,6 +113,23 @@ const SidePanel = (props: Props) => {
             />
           );
         })}
+      </Section>
+      <Section className='min-h-max overflow-none' id='histogram' title='Histogram'>
+        <div style={{height:"30vh"}}>
+          <VictoryChart
+            domainPadding={{ x: 20 }}
+          >
+            <VictoryHistogram
+              style={{ data: { fill: "#5d7ca2", stroke: "#334155"} }}
+              data={diameters.map(d => {return {x:d}} )}
+              animate={{
+                duration: 500,
+                onLoad: { duration: 500 },
+              }}
+            />
+          </VictoryChart>
+        </div>
+    
       </Section>
       <Section className='min-h-max overflow-none' id='globals' title='Globals'>
         <GlobalItem>
