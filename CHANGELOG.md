@@ -2,6 +2,15 @@
 
 <!--next-version-placeholder-->
 
+## v0.10.0 (2022-11-03)
+### Feature
+* Use of segmentation_models_pytorch librbary ([`dfe0a63`](https://github.com/fcossio/FiberDiameter/commit/dfe0a63a7199bab9cf96b06a1aabf40d160b179e))
+* Ignore project specific files ([`f44d53c`](https://github.com/fcossio/FiberDiameter/commit/f44d53c66f396d6426ade6d41f499d3ba7e350dd))
+* Add max epochs limit ([`8ebb2a6`](https://github.com/fcossio/FiberDiameter/commit/8ebb2a6763236cadeb4f981f1ab7dc8b7d794ed4))
+* Addition of Wandblogger ([`c581c85`](https://github.com/fcossio/FiberDiameter/commit/c581c8592acaf30b1d469e8a8877bbcb8487bf25))
+* Log validations sample images to wandb ([`2843c8e`](https://github.com/fcossio/FiberDiameter/commit/2843c8eb01fc487bf83a998856d0c4766b05f624))
+* Log using WandbLogger ([`5f7e90b`](https://github.com/fcossio/FiberDiameter/commit/5f7e90b69283f0c7d68d0c2e9f97da3f342823c6))
+
 ## v0.9.2 (2022-11-03)
 
 
