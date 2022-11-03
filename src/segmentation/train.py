@@ -1,12 +1,14 @@
-import sys
-
-from argparse import ArgumentParser
+import yaml
 import inspect
+import numpy as np
 
 import torch
-import wandb
+import pytorch_lightning as pl
 from pytorch_lightning import Trainer, seed_everything
-import onnx
+from pytorch_lightning.loggers import WandbLogger
+from PIL import Image as PILImage
+
+import wandb
 
 from UNet import UNet
 from dataset import FiberDataModule
@@ -14,34 +16,11 @@ from dataset import FiberDataModule
 import multiprocessing
 
 
-def parse_args(raw_args):
-    parser = ArgumentParser(description="Train a Unet from scratch.")
-    parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--max_epochs", type=int, default=20)
-    parser.add_argument("--num_classes", type=int, default=1)
-    parser.add_argument("--in_channels", type=int, default=2)
-    parser.add_argument("--start_filts", type=int, default=64)
-    parser.add_argument("--depth", type=int, default=4)
-    parser.add_argument("--batch_size", type=int, default=8)
-    parser.add_argument("--learning_rate", type=float, default=0.0001)
-    parser.add_argument(
-        "--loss", type=str, default="mse_loss"
-    )  # torch.nn.functional.mse_loss
-    parser.add_argument("--optimizer", type=str, default="Adam")  # torch.optim.Adam
-    parser.add_argument("--merge_mode", type=str, default="concat")
-    parser.add_argument("--up_mode", type=str, default="transpose")
-    parser.add_argument(
-        "--data_dir", type=str, default="artifacts/rendered-fibers-medium:v0"
-    )
-    parser.add_argument("--num_workers", type=int, default=multiprocessing.cpu_count())
-    parser.add_argument("--limit_train_batches", type=float, default=0.25)
-    parser.add_argument("--shuffle", type=bool, default=True)
-    parser.add_argument("--train_images", type=int, default=2047)
-    parser.add_argument("--val_images", type=int, default=255)
-    parser.add_argument("--test_images", type=int, default=255)
-    parser.add_argument("--model_path", type=str, default="seg_model.onnx")
-    args = parser.parse_args(raw_args)
-    return args
+def load_config(config_file):
+    with open(config_file) as file:
+        config = yaml.safe_load(file)
+
+    return config
 
 
 def init_from_valid_args(cls, args):
@@ -58,42 +37,85 @@ def to_numpy(tensor):
     )
 
 
+class ImagePredictionLogger(pl.Callback):
+    def __init__(self, batch, n_samples=3):
+        super().__init__()
+        self.x, self.y = batch
+        self.x = self.x[:n_samples]
+        self.y = self.y[:n_samples]
+
+    def on_validation_epoch_end(self, trainer, pl_module):
+
+        x = self.x.to(device=pl_module.device)
+
+        outs = pl_module(x).detach()
+
+        trainer.logger.experiment.log(
+            {
+                "examples": [
+                    wandb.Image(
+                        x_i[0, :, :],
+                        masks={
+                            "ground_truth": {
+                                "mask_data": to_image(y_i[0, :, :]),
+                                "class_labels": {255: "foreground", 0: "background"},
+                            },
+                            "prediction": {
+                                "mask_data": to_image(out_i[0, :, :] > 0.5),
+                                "class_labels": {255: "foreground", 0: "background"},
+                            },
+                        },
+                    )
+                    for x_i, out_i, y_i in zip(x, outs, self.y)
+                ],
+                "global_step": trainer.global_step,
+            }
+        )
+
+
+def to_image(tensor: torch.tensor):
+
+    return tensor.numpy().astype(np.int8) * 255
+
+
 if __name__ == "__main__":
 
-    run = wandb.init(
+    wandb.login()
+
+    logger = WandbLogger(
         project="FiberDiameter",
-        job_type="train",
-        config=parse_args(sys.argv[1:]),
+        log_model="all",
     )
-    cfg = run.config
 
-    seed_everything(cfg.seed, workers=True)
+    config = load_config("config.yml")
+    config["logger"] = logger
+    config["num_workers"] = multiprocessing.cpu_count()
+    if torch.cuda.device_count():
+        config["accelerator"] = "gpu"
+        config["devices"] = torch.cuda.device_count()
 
-    artifact = run.use_artifact(
+    seed_everything(config["seed"], workers=True)
+
+    artifact = wandb.use_artifact(
         "warm-kanelbullar/FiberDiameter/rendered-fibers-medium:latest"
     )
 
-    cfg.dataset_path = artifact.download()
+    dataset_path = artifact.download()
 
-    fibers = init_from_valid_args(FiberDataModule, cfg)
+    config["dataset_path"] = "artifacts/rendered-fibers-medium:v0"
 
-    model = init_from_valid_args(UNet, cfg)
+    fibers = init_from_valid_args(FiberDataModule, config)
 
-    trainer = init_from_valid_args(Trainer, cfg)
+    model = init_from_valid_args(UNet, config)
+
+    fibers.prepare_data()
+    fibers.setup()
+    samples = next(iter(fibers.val_dataloader()))
+
+    config["callbacks"] = [ImagePredictionLogger(samples)]
+
+    trainer = init_from_valid_args(Trainer, config)
 
     trainer.fit(model, datamodule=fibers)
 
-    torch.onnx.export(
-        model=model,
-        args=torch.randn(1, 2, 256, 256),
-        f=cfg.model_path,
-        export_params=True,
-        verbose=True,
-        input_names=["input"],
-        output_names=["segmentation"],
-    )
-
-    trained_model_artifact = wandb.Artifact("seg_model", type="model", metadata=cfg)
-    trained_model_artifact.add_file(cfg.model_path)
-    run.log_artifact(trained_model_artifact)
-    run.finish()
+    wandb.finish()

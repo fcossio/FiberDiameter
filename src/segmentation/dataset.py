@@ -8,13 +8,13 @@ import pytorch_lightning as pl
 from PIL import Image, ImageOps
 
 
-def load_task(data_dir: str, task_id: str):
+def load_task(data_path: str, task_id: str):
     # Load an image
-    im = Image.open(os.path.join(data_dir, task_id + ".png"))
+    im = Image.open(os.path.join(data_path, task_id + ".png"))
     im = np.array(ImageOps.grayscale(im))
     im = im.reshape((1,) + im.shape).astype(np.float32) / 255  # one channel image
     # Load segmentation
-    seg: np.ndarray = np.load(os.path.join(data_dir, task_id + "_seg.npz"))["y"]
+    seg: np.ndarray = np.load(os.path.join(data_path, task_id + "_seg.npz"))["y"]
     seg = np.moveaxis(seg, -1, 0)
     return im, seg
 
@@ -33,9 +33,9 @@ def select_point_and_fiber(seg: np.ndarray):
     return point, selected_seg
 
 
-def get_example(data_dir: str, task_id: str) -> tuple:
+def get_example(data_path: str, task_id: str) -> tuple:
     """Creates an example for training"""
-    im, seg = load_task(data_dir, task_id)
+    im, seg = load_task(data_path, task_id)
     point, selected_seg = select_point_and_fiber(seg)
     point_channel = np.zeros_like(im, dtype=np.float32)
     point_channel[point[0], point[1], point[2]] = 1.0
@@ -48,25 +48,26 @@ class FiberDataset(torch.utils.data.Dataset):
     def __init__(
         self,
         stage: str,
-        data_dir: str,
+        data_path: str,
         num_images: int,
     ):
         super().__init__()
 
         self.stage = stage
-        self.data_dir = data_dir
+        self.data_path = data_path
         self.num_images = num_images
 
     def __len__(self):
         return self.num_images
 
     def __getitem__(self, idx):
-        
-        if idx >= len(self): raise IndexError
+
+        if idx >= len(self):
+            raise IndexError
 
         task_id = self.stage + str(idx).zfill(4)
 
-        x, y = get_example(self.data_dir, task_id)
+        x, y = get_example(self.data_path, task_id)
 
         x = torch.tensor(x)
         y = torch.tensor(y)
@@ -77,7 +78,7 @@ class FiberDataset(torch.utils.data.Dataset):
 class FiberDataModule(pl.LightningDataModule):
     def __init__(
         self,
-        data_dir: str,
+        data_path: str,
         train_images: int,
         val_images: int,
         test_images: int = None,
@@ -85,31 +86,31 @@ class FiberDataModule(pl.LightningDataModule):
         num_workers: int = 2,
     ):
         super().__init__()
-        self.data_dir = data_dir
+        self.data_path = data_path
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.train_images = train_images
         self.val_images = val_images
         self.test_images = test_images
 
-    def setup(self, stage: str):
+    def setup(self, stage: str = None):
 
         if stage == "fit" or stage is None:
             self.fiber_train = FiberDataset(
                 "train",
-                self.data_dir,
+                self.data_path,
                 self.train_images,
             )
             self.fiber_val = FiberDataset(
                 "val",
-                self.data_dir,
+                self.data_path,
                 self.val_images,
             )
 
-        else:
+        if stage == "test" or stage is None:
             self.fiber_test = FiberDataset(
                 "test",
-                self.data_dir,
+                self.data_path,
                 self.test_images,
             )
 
