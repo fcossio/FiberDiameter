@@ -2,6 +2,9 @@
 
 <!--next-version-placeholder-->
 
+## v0.9.2 (2022-11-03)
+
+
 ## v0.9.1 (2022-10-28)
 ### Fix
 * **Frontend inference:** Fix onnxruntme cdn ([#47](https://github.com/fcossio/FiberDiameter/issues/47)) ([`930bc4c`](https://github.com/fcossio/FiberDiameter/commit/930bc4c793e743d79b4f5902a04940c96fd74521))
