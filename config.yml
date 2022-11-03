@@ -9,12 +9,15 @@ model_path: "seg_model.onnx"
 
 #------------------- Model ---------------------#
 
-num_classes: 1
+encoder_name: "resnet18"
+encoder_depth: 4
+encoder_weights: "imagenet"
+decoder_channels: [64, 32, 16, 8]
+decoder_use_batchnorm: True
+#decoder_attention_type: None
 in_channels: 2
-start_filts: 64
-depth: 4
-merge_mode: "concat"
-up_mode: "transpose"
+classes: 1
+activation: "sigmoid"
 
 #################################################
 ################### Training ####################

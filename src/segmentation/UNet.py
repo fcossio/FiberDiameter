@@ -1,20 +1,22 @@
+from typing import Union
 import wandb
-
 import torch
-import pytorch_lightning as pl
 import torchmetrics
-from unet_pytorch.model import UNet as _UNet
+import pytorch_lightning as pl
+from segmentation_models_pytorch import Unet as UNet_smp
 
 
 class UNet(pl.LightningModule):
     def __init__(
         self,
-        num_classes: int,
+        encoder_name: str,
+        encoder_depth: int,
+        encoder_weights: str,
+        decoder_channels: list[int],
+        decoder_use_batchnorm: bool,
         in_channels: int,
-        depth: int,
-        start_filts: int,
-        up_mode: str,
-        merge_mode: str,
+        classes: int,
+        activation: Union[str, callable, None],
         learning_rate: float,
         loss: str,
         optimizer: str,
@@ -25,8 +27,15 @@ class UNet(pl.LightningModule):
 
         self.model_path = model_path
 
-        self.model = _UNet(
-            num_classes, in_channels, depth, start_filts, up_mode, merge_mode
+        self.model = UNet_smp(
+            encoder_name=encoder_name,
+            encoder_depth=encoder_depth,
+            encoder_weights=encoder_weights,
+            decoder_channels=decoder_channels,
+            decoder_use_batchnorm=decoder_use_batchnorm,
+            in_channels=in_channels,
+            classes=classes,
+            activation=activation,
         )
 
         self.learning_rate = learning_rate
