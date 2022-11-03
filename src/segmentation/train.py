@@ -88,6 +88,7 @@ if __name__ == "__main__":
     )
 
     config = load_config("config.yml")
+
     config["logger"] = logger
     config["num_workers"] = multiprocessing.cpu_count()
     if torch.cuda.device_count():
