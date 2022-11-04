@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.11.0 (2022-11-04)
+### Feature
+* **UI:** Histogram ([#50](https://github.com/fcossio/FiberDiameter/issues/50)) ([`f3d694a`](https://github.com/fcossio/FiberDiameter/commit/f3d694ae441a52ce215308161e6f89d570e2e61c))
+
 ## v0.10.0 (2022-11-03)
 ### Feature
 * Use of segmentation_models_pytorch librbary ([`dfe0a63`](https://github.com/fcossio/FiberDiameter/commit/dfe0a63a7199bab9cf96b06a1aabf40d160b179e))
