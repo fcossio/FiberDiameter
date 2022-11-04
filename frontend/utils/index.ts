@@ -1,6 +1,10 @@
 // adapted from: https://www.npmjs.com/package/intrinsic-scale
+
+import { Fiber } from "../types";
+import { calculateDistance } from "@coszio/react-measurements";
+
 /**
- * 
+ *
  * @param contains Type of fitting: object-contain = `true`, object-cover = `false`
  * @param image HTML image reference
  * @returns The real fitted dimensions of the image, along with its offset
@@ -33,7 +37,7 @@ export function getObjectFitSize(
 
 /**
  * Calculates the real size of the image from a measurement and its length
- */ 
+ */
 export const calculateRealImageSize = (
   measurement: any,
   length: number,
@@ -54,5 +58,45 @@ export const calculateRealImageSize = (
 };
 
 export const average = (arr: number[]) => {
-  return arr.reduce((a, b) => a + b, 0) / arr.length
-}
+  return arr.reduce((a, b) => a + b, 0) / arr.length;
+};
+
+export const fibersToCSV = (
+  fibers: Fiber[],
+  realDims: { width: number; height: number },
+  magnitude: string
+) => {
+  const headers = [
+    "fiberId",
+    `measureLength (${magnitude})`,
+    "startX (%)",
+    "startY (%)",
+    "endX (%)",
+    "endY (%)",
+  ].join(",");
+
+  const data = fibers
+    .map(
+      (fiber) =>
+        fiber.measurements
+          .map((line) => {
+            const realLength = calculateDistance(
+              line,
+              realDims.width,
+              realDims.height
+            );
+            return [
+              fiber.id,
+              realLength,
+              line.startX,
+              line.startY,
+              line.endX,
+              line.endY,
+            ].join(","); // line
+          })
+          .join("\n") // lines in fiber
+    )
+    .join("\n"); // all lines of all fibers
+
+  return [headers, data].join("\n");
+};
