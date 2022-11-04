@@ -131,7 +131,7 @@ const SidePanel = (props: Props) => {
         title='Histogram'
       >
         <div className='h-[25vh] pl-3 -mr-6'>
-          <VictoryChart domainPadding={{ x: 15 }}>
+          <VictoryChart domainPadding={{ x: 30 }}>
             
             {debouncedDiameters.length < 2 && (
               <VictoryLegend
@@ -146,7 +146,7 @@ const SidePanel = (props: Props) => {
             
             <VictoryAxis label={magnitude} />
             <VictoryAxis
-              label='# of fibers'
+              label='Frequency'
               dependentAxis
               style={{ axisLabel: { padding: "35" } }}
             />
@@ -158,6 +158,7 @@ const SidePanel = (props: Props) => {
                 duration: 500,
                 onLoad: { duration: 500 },
               }}
+              bins={10}
             />
           </VictoryChart>
         </div>
