@@ -139,7 +139,7 @@ const MeasuredImage = (props: Props) => {
       }));
       addFiber(measurements, color);
     } catch (error: any) {
-      toast.warn(error.message.toString());
+      toast.warn(error.message.toString(), {autoClose:500});
     }
     // remove inference mark
     setAppState((prevState) => {
@@ -182,7 +182,7 @@ const MeasuredImage = (props: Props) => {
           ))}
           <ScaleLayer
             measurement={scaleMeasurement}
-            color={"#FAFAFA"}
+            color={"#f2f200"}
             onChange={(measurements) => setScaleMeasurement(measurements[0])}
             measureLine={(line) => "scale: " + measureLine(line)}
             measureCircle={measureCircle}

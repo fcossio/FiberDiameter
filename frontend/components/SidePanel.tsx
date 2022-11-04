@@ -1,7 +1,14 @@
+import { useDebouncedValue } from "@mantine/hooks";
 import randomColor from "randomcolor";
 import { ChangeEvent, useContext, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { IoMdColorWand } from "react-icons/io";
+import {
+  VictoryAxis,
+  VictoryChart,
+  VictoryHistogram,
+  VictoryLegend,
+} from "victory";
 import { average } from "../utils";
 import { AppContext } from "./App";
 import FiberItem from "./FiberItem";
@@ -34,13 +41,16 @@ const SidePanel = (props: Props) => {
   const diameters = fibers.map((fiber) => fiber.average);
   const globalAverage = Math.trunc(average(diameters) * 1000) / 1000 || 0;
 
+  const [debouncedDiameters] = useDebouncedValue(diameters, 200);
+  const histogramData = debouncedDiameters.map((d) => ({ x: d }));
+
   return (
     <div
       id='side-panel'
       className='flex flex-col justify-between w-1/4 text-sm min-w-max bg-slate-300'
     >
       <Section
-        className='overflow-auto'
+        className='h-full overflow-auto'
         id='fibers'
         title='Fibers'
         actions={
@@ -97,12 +107,14 @@ const SidePanel = (props: Props) => {
             });
             setFibers(newFibers);
           };
+          
           const removeFiber = () => {
             setFibers((prevFibers) => {
               prevFibers.splice(key, 1);
               return [...prevFibers];
             });
           };
+          
           return (
             <FiberItem
               key={fiber.id}
@@ -112,6 +124,44 @@ const SidePanel = (props: Props) => {
             />
           );
         })}
+      </Section>
+      <Section
+        className='min-h-max overflow-none'
+        id='histogram'
+        title='Histogram'
+      >
+        <div className='h-[25vh] pl-3 -mr-6'>
+          <VictoryChart domainPadding={{ x: 30 }}>
+            
+            {debouncedDiameters.length < 2 && (
+              <VictoryLegend
+                x={90}
+                y={130}
+                title={"Add more fibers to begin plotting"}
+                centerTitle
+                style={{ title: { fontSize: 20 } }}
+                data={[]}
+              />
+            )}
+            
+            <VictoryAxis label={magnitude} />
+            <VictoryAxis
+              label='Frequency'
+              dependentAxis
+              style={{ axisLabel: { padding: "35" } }}
+            />
+
+            <VictoryHistogram
+              style={{ data: { fill: "#5d7ca2", stroke: "#334155" } }}
+              data={histogramData}
+              animate={{
+                duration: 500,
+                onLoad: { duration: 500 },
+              }}
+              bins={10}
+            />
+          </VictoryChart>
+        </div>
       </Section>
       <Section className='min-h-max overflow-none' id='globals' title='Globals'>
         <GlobalItem>
