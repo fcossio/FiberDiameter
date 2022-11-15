@@ -1,8 +1,29 @@
 import React, { useContext } from "react";
+import { fibersToCSV } from "../utils";
 import { AppContext } from "./App";
 
 const SystemMenu = (props: React.ComponentPropsWithoutRef<"div">) => {
-  const { swapImage } = useContext(AppContext)!;
+  const { swapImage, fibers, appState: { realDims, magnitude } } = useContext(AppContext)!;
+
+  const downloadCsv = () => {
+    // Create CSV
+    const csv = fibersToCSV(fibers, realDims, magnitude);
+    
+    // Create blob link to download
+    const url = window.URL.createObjectURL(new Blob([csv]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `FiberDiameters.csv`);
+
+    // Append to html link element page
+    document.body.appendChild(link);
+
+    // Start download
+    link.click();
+
+    // Clean up and remove the link
+    link.parentNode?.removeChild(link);
+  }
 
   return (
     <div className='flex p-1 text-sm select-none group bg-slate-700'>
@@ -17,15 +38,15 @@ const SystemMenu = (props: React.ComponentPropsWithoutRef<"div">) => {
         {/* <Item>Open</Item> */}
       </Tab>
       <Tab title='Download'>
-        {/* <Item>annotated Image</Item>
-        <Item>as CSV</Item>
-        <Item>as JSON</Item> */}
+        {/* <Item>annotated Image</Item> */}
+        <Item htmlFor="download-csv" onClick={downloadCsv}>as CSV</Item>
+        {/* <Item>as JSON</Item> */}
       </Tab>
-      <Tab title='Edit'>
-        {/* <Item>Add Segment</Item> */}
-        {/* <Item>Add Fiber</Item> */}
-        {/* <Item>Set Scale</Item> */}
-      </Tab>
+      {/* <Tab title='Edit'>
+        <Item>Add Segment</Item>
+        <Item>Add Fiber</Item>
+        <Item>Set Scale</Item>
+      </Tab> */}
     </div>
   );
 };
