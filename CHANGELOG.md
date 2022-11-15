@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.12.0 (2022-11-15)
+### Feature
+* **UI:** Download as csv ([#55](https://github.com/fcossio/FiberDiameter/issues/55)) ([`fc0ca30`](https://github.com/fcossio/FiberDiameter/commit/fc0ca307e533a6078f3efa1513621e9e3878a271))
+
 ## v0.11.0 (2022-11-04)
 ### Feature
 * **UI:** Histogram ([#50](https://github.com/fcossio/FiberDiameter/issues/50)) ([`f3d694a`](https://github.com/fcossio/FiberDiameter/commit/f3d694ae441a52ce215308161e6f89d570e2e61c))
